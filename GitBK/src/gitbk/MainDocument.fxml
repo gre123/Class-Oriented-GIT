@@ -8,7 +8,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainDocumentController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -27,7 +26,7 @@
       </MenuBar>
    </top>
    <right>
-      <ListView prefHeight="375.0" prefWidth="246.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="reposView" prefHeight="375.0" prefWidth="246.0" BorderPane.alignment="CENTER" />
    </right>
    <center>
       <Label alignment="CENTER" onMouseClicked="#onAddRepoClicked" prefHeight="30.0" prefWidth="245.0" style="-fx-font-size: 20;" text="Dodaj nowe repozytorium" textFill="#f58353" BorderPane.alignment="CENTER" />

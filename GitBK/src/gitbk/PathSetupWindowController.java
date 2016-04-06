@@ -7,6 +7,7 @@ package gitbk;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -22,13 +23,15 @@ import javafx.stage.Stage;
 
 public class PathSetupWindowController implements Initializable {
 
-     public enum WindowBehaviour {
+    public enum WindowBehaviour {
         SET_PATH, REPO_PATH
     }
      
+    private WindowBehaviour behaviour;
+    private Initializable parentController;
+            
     @FXML
     private TextField pathInputText;
-    private WindowBehaviour behaviour;
     
     @FXML
     private void onOKButtonClicked()
@@ -38,12 +41,15 @@ public class PathSetupWindowController implements Initializable {
             {
                 case REPO_PATH:
                 {
-                    GitFacade.cloneRepo(pathInputText.toString());
+                    Set<String> repoNames = GitFacade.cloneRepo(pathInputText.getText());
+                    MainDocumentController controller = (MainDocumentController)parentController;
+                    controller.setReposListView(repoNames);
+                    
                     break;
                 }
                 case SET_PATH:
                 {
-                    GitFacade.FILE_PATH = pathInputText.toString();
+                    GitFacade.filePath = pathInputText.toString();
                 }
             }
         } catch (Exception ex) {
@@ -64,6 +70,10 @@ public class PathSetupWindowController implements Initializable {
     public void setBehaviour(WindowBehaviour behaviour)
     {
         this.behaviour = behaviour;
+    }
+    public void setParentController(Initializable controller)
+    {
+        this.parentController = controller;
     }
     
 }

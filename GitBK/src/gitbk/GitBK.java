@@ -20,10 +20,11 @@ public class GitBK extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        GitFacade.findAllReposInDirectory();
         Parent root = FXMLLoader.load(getClass().getResource("MainDocument.fxml"));
         
+        
         Scene scene = new Scene(root);
-        stage.setFullScreen(true);
         stage.setTitle("COK : Class-Oriented Git");
         stage.setScene(scene);
         stage.show();
