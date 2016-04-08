@@ -7,6 +7,8 @@ package gitbk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -22,8 +24,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 
 /**
  *
@@ -34,7 +41,28 @@ public class MainDocumentController implements Initializable {
     
     @FXML
     private ListView reposView;
+    
+    @FXML 
+    private SplitPane mainSplitPane;
             
+    @FXML
+    private void onRepoListItemClicked(MouseEvent event)
+    {
+        
+        try{
+            Git selectedRepo = GitFacade.repos.get(reposView.getSelectionModel().getSelectedIndex());
+            System.out.println("sources:"+Arrays.deepToString(Source2ClassConverter.getSourcesFromPath(selectedRepo)));
+            
+            if(!mainSplitPane.isVisible()) {
+                mainSplitPane.setVisible(true);
+            }
+            
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
     @FXML
     private void onAddRepoClicked() {
         try {
@@ -51,6 +79,7 @@ public class MainDocumentController implements Initializable {
             Logger.getLogger(MainDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     private void createInputTextWindow() throws IOException
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("PathSetupWindow.fxml"));

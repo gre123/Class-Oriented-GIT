@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 
@@ -42,8 +40,7 @@ public class GitFacade {
             }
             
         }
-    }
-            
+    }   
  
     public static Set<String> cloneRepo(String url) throws Exception
     {
@@ -72,4 +69,5 @@ public class GitFacade {
     {
         
     }
+    
 }
