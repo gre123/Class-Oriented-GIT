@@ -42,7 +42,7 @@ public class PathSetupWindowController implements Initializable {
                 case REPO_PATH:
                 {
                     Set<String> repoNames = GitFacade.cloneRepo(pathInputText.getText());
-                    MainDocumentController controller = (MainDocumentController)parentController;
+                    ChooseRepoWindowController controller = (ChooseRepoWindowController)parentController;
                     controller.setReposListView(repoNames);
                     
                     break;
@@ -66,10 +66,15 @@ public class PathSetupWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+ 
     }    
     public void setBehaviour(WindowBehaviour behaviour)
     {
         this.behaviour = behaviour;
+        if(behaviour.equals(WindowBehaviour.SET_PATH))
+        {
+            pathInputText.setText(GitFacade.filePath);
+        }  
     }
     public void setParentController(Initializable controller)
     {
