@@ -44,7 +44,7 @@
                   <TextField layoutX="15.0" layoutY="213.0" prefHeight="25.0" prefWidth="192.0" promptText="Wpisz nazwę klasy..." />
                   <Button layoutX="19.0" layoutY="251.0" mnemonicParsing="false" onAction="#onSearchClass" onMouseClicked="#onSearchClass" text="Szukaj" />
                   <Button layoutX="14.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSelectRepository" text="Wybierz..." />
-                  <Label fx:id="selectedRepository" layoutX="19.0" layoutY="53.0" text="Nie wybrano" />
+                  <Label fx:id="selectedRepositoryLabel" layoutX="19.0" layoutY="53.0" text="Nie wybrano" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">

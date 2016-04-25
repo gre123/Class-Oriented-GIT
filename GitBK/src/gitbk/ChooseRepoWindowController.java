@@ -29,16 +29,11 @@ import org.eclipse.jgit.api.Git;
  *
  * @author Grzesiek
  */
-public class ChooseRepoWindowController implements Initializable {
+public class ChooseRepoWindowController extends COGController {
 
     @FXML
     ListView reposListView;
     
-    private Initializable parentController;
-    /**
-     *
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
@@ -54,14 +49,14 @@ public class ChooseRepoWindowController implements Initializable {
         try {
             createInputTextWindow(PathSetupWindowController.WindowBehaviour.REPO_PATH);
         } catch (IOException ex) {
-            Logger.getLogger(MainDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     @FXML
-    private void onSelectRepoClicked(MouseEvent event)
+    private void onSelectRepoClicked() throws Exception
     {
-        MainWindowController controller = (MainWindowController)parentController;
+        MainWindowController controller = (MainWindowController) parentController;
         Git repo = GitFacade.repos.get(reposListView.getSelectionModel().getSelectedIndex());
         controller.loadCurrentRepository(repo);
         Stage stage = (Stage)reposListView.getScene().getWindow();

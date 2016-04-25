@@ -2,21 +2,15 @@ package gitbk;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.stage.DirectoryChooser;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,7 +21,7 @@ import javafx.stage.Stage;
  * Created by Piotr on 2016-04-22.
  */
 
-public class MainWindowController implements Initializable {
+public class MainWindowController extends COGController {
 
     private Repository repository;
     private RevWalk revWalk;
@@ -70,6 +64,8 @@ public class MainWindowController implements Initializable {
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ChooseRepoWindow.fxml"));
         Parent root = (Parent) loader.load();
+        loader.<COGController>getController().setParentController(this);
+        
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOpacity(1);
@@ -79,17 +75,14 @@ public class MainWindowController implements Initializable {
     
     
 
-    public void loadCurrentRepository(Git selectedRepo)
+    public void loadCurrentRepository(Git selectedRepo) throws Exception
     {
         repository = selectedRepo.getRepository();
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
-        revWalk = new RevWalk(repository);
-        try{
-            RevCommit lastCommit = revWalk.next();
-            System.out.println(lastCommit.getCommitTime());
-        }catch(Exception e){}
+        
+        GitFacade.getSourceFromCommit(repository);
     }
 
 }

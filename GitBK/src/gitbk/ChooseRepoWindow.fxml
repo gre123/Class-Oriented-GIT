@@ -12,7 +12,7 @@
          <children>
             <Label prefHeight="17.0" prefWidth="135.0" text="Podłączone repozytoria" />
             <ListView fx:id="reposListView" prefHeight="299.0" prefWidth="600.0" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="36.0" prefWidth="600.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#onSelectRepoClicked" text="Wybierz repozytorium" />
                   <Button mnemonicParsing="false" onAction="#onAddRepoClicked" text="Sklonuj inne repozytorium" />

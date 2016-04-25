@@ -10,18 +10,14 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
 /**
- * FXML Controller class
  *
  * @author Grzesiek
  */
-public class LoginDocumentController implements Initializable {
+public abstract class COGController implements Initializable{
+    protected Initializable parentController;
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+    public void setParentController(Initializable parent)
+    {
+        parentController = parent;
+    }
 }
