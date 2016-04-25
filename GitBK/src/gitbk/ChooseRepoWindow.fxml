@@ -19,6 +19,7 @@
                   <Button mnemonicParsing="false" onAction="#onSetRepoPathClicked" text="Zmień ścieżkę z repozytoriami" />
                </children>
             </HBox>
+            <TextField fx:id="regexField" />
          </children>
       </VBox>
    </children>

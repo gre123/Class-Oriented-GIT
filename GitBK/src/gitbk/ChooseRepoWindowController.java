@@ -7,6 +7,7 @@ package gitbk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,14 +36,13 @@ public class ChooseRepoWindowController extends COGController {
     @FXML
     ListView reposListView;
     
+    @FXML
+    TextField regexField;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-        try {
-            setReposListView(GitFacade.getRepoNames());
-        } catch (IOException ex) {
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            setReposListView(GitFacade.repos.keySet());
+ 
     } 
     
     @FXML
@@ -57,8 +58,10 @@ public class ChooseRepoWindowController extends COGController {
     private void onSelectRepoClicked() throws Exception
     {
         MainWindowController controller = (MainWindowController) parentController;
-        Git repo = GitFacade.repos.get(reposListView.getSelectionModel().getSelectedIndex());
-        controller.loadCurrentRepository(repo);
+        String s = (String) reposListView.getSelectionModel().getSelectedItem();
+        
+        Git repo = GitFacade.repos.get(s);
+        controller.loadCurrentRepository(repo, regexField.getText());
         Stage stage = (Stage)reposListView.getScene().getWindow();
         stage.close();
     }

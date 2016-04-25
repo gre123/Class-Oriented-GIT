@@ -45,6 +45,12 @@
                   <Button layoutX="19.0" layoutY="251.0" mnemonicParsing="false" onAction="#onSearchClass" onMouseClicked="#onSearchClass" text="Szukaj" />
                   <Button layoutX="14.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSelectRepository" text="Wybierz..." />
                   <Label fx:id="selectedRepositoryLabel" layoutX="19.0" layoutY="53.0" text="Nie wybrano" />
+                  <TreeView fx:id="classTreeView" layoutX="11.0" layoutY="326.0" prefHeight="216.0" prefWidth="200.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="326.0" />
+                  <Label alignment="CENTER" contentDisplay="TOP" layoutX="11.0" layoutY="292.0" prefHeight="27.0" prefWidth="96.0" text="Lista klas" textFill="#9a9797">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">

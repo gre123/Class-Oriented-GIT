@@ -7,13 +7,49 @@ package gitbk;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectStream;
 
 /**
  *
  * @author Grzesiek
  */
 public class Source2ClassConverter {
+    
+    
+    public static List<COGClass> convert(ObjectStream inputStream)
+    {
+        List<COGClass> classes = new ArrayList<>();
+        String regex = "(class (([a-zA-z])+))";
+        Scanner scanner = new Scanner(inputStream);
+        scanner.useDelimiter("\n");
+        while(scanner.hasNext())
+        {
+            Matcher m = Pattern.compile(regex).matcher(scanner.next());
+            if(m.find()){
+                COGClass c = COGClassFactory.newInstance();
+                c.setName(m.group(2));
+                classes.add(c);
+                
+//                System.out.println(m.group(2));
+            }
+        }
+        return classes;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     static File[] getSourcesFromPath(Git repo)

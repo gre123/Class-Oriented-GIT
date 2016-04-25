@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
@@ -29,7 +29,7 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
  */
 public class GitFacade {
     public static String filePath = "C:/Users/Grzesiek/Moje rzeczy/rewizje/repos";
-    public static List<Git> repos = new ArrayList<>();
+    public static TreeMap<String, Git> repos = new TreeMap<>();
     
     public static void findAllReposInDirectory()
     {
@@ -41,7 +41,7 @@ public class GitFacade {
                 {
                    try {  
                         Git repo = Git.open(file);
-                        repos.add(repo);
+                        repos.put(getRepoName(repo),repo);
                    } catch (IOException ex) {
                         System.out.println("Nie jestem repo!");
                    }
@@ -56,19 +56,16 @@ public class GitFacade {
         String name = url.substring(url.lastIndexOf("/")+1);
         CloneCommand clone  = Git.cloneRepository().setURI(url).setDirectory(new File(filePath+"/"+name));
         Git git = clone.call();
-        repos.add(git);
-        return getRepoNames();
+        repos.put(getRepoName(git),git);
+        return repos.keySet();
     }
-    static Set<String> getRepoNames() throws IOException
+    
+    static String getRepoName(Git git) throws IOException
     {
-        TreeSet<String> repoNames = new TreeSet<String>();
-        for(Git repo: repos)
-        {
-            String[] directoryPieces = repo.getRepository().getDirectory().toString().split("\\\\");
-            String name = directoryPieces[directoryPieces.length-2];
-            repoNames.add(name+" ["+repo.getRepository().getBranch()+"]");
-        }
-        return repoNames;
+        String[] directoryPieces = git.getRepository().getDirectory().toString().split("\\\\");
+        String name = directoryPieces[directoryPieces.length-2];
+        return name+" ["+git.getRepository().getBranch()+"]";
+
     }
     public static void commitRepo()
     {
@@ -79,8 +76,10 @@ public class GitFacade {
         
     }
  
-    public static void getSourceFromCommit(Repository repo) throws Exception
+    public static List<COGClass> getSourceFromCommit(Repository repo, String reg) throws Exception
     {
+       List<COGClass> allClasses = new ArrayList<>();
+       String regex = reg;
        RevWalk revWalk = new RevWalk(repo);  
        ObjectId lastcommitID = repo.resolve(Constants.HEAD);
        
@@ -101,7 +100,10 @@ public class GitFacade {
            System.out.println(treeWalk.getPathString());
            ObjectId id = treeWalk.getObjectId(0);
            ObjectLoader loader = repo.open(id);
-           loader.copyTo(System.out);
+           
+           allClasses.addAll(Source2ClassConverter.convert(loader.openStream()));   
+           
        }
+       return allClasses;
     }
 }
