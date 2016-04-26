@@ -8,7 +8,7 @@ package gitbk;
 import java.util.List;
 
 public class COGClass implements Comparable<COGClass>{
-    private String className;
+    private String className="";
     private List<COGMethod> classMethods;
 
     @Override
@@ -19,7 +19,25 @@ public class COGClass implements Comparable<COGClass>{
     public class COGMethod
     {
         private String methodName;
+        private String methodAccess;
         private String methodContent;
+        
+        public void setName(String name)
+        {
+            methodName = name;
+        }
+        public void setAccess(String access)
+        {
+            methodAccess = access;
+        }
+        public void setContent(String content)
+        {
+            methodContent = content;
+        }
+        public String getName()
+        {
+            return methodName;
+        }
     }
     
     public void setName(String name)
@@ -34,5 +52,10 @@ public class COGClass implements Comparable<COGClass>{
     public String getName()
     {
         return className;
+    }
+    
+    public List<COGMethod> getMethods()
+    {
+        return classMethods;
     }
 }

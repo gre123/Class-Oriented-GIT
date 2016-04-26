@@ -8,16 +8,17 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevWalk;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.eclipse.jgit.lib.Constants;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -34,6 +35,9 @@ public class MainWindowController extends COGController {
     
     @FXML
     TreeView classTreeView;
+    
+    @FXML
+    TextArea sourceTextArea;
 
     @FXML
     void onSearchClass(ActionEvent event) {
@@ -86,7 +90,7 @@ public class MainWindowController extends COGController {
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
         
-        classes = GitFacade.getSourceFromCommit(repository,reg);
+        classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         populateTreeView();
     }
     
@@ -94,7 +98,7 @@ public class MainWindowController extends COGController {
     {
         if(classes != null)
         {
-            Collections.sort(classes);
+//            Collections.sort(classes);
             
             TreeItem allClasses = new TreeItem("Klasy");
             classTreeView.setRoot(allClasses);
@@ -102,6 +106,13 @@ public class MainWindowController extends COGController {
             for(COGClass cl:classes)
             {
                 TreeItem item = new TreeItem(cl.getName());
+                
+                for(COGClass.COGMethod method:cl.getMethods())
+                {
+                    TreeItem methodItem = new TreeItem(method.getName());
+                    item.getChildren().add(methodItem);
+                }
+ 
                 allClasses.getChildren().add(item);
             }
         }

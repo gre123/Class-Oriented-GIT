@@ -76,19 +76,14 @@ public class GitFacade {
         
     }
  
-    public static List<COGClass> getSourceFromCommit(Repository repo, String reg) throws Exception
+    public static List<COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
     {
        List<COGClass> allClasses = new ArrayList<>();
-       String regex = reg;
-       RevWalk revWalk = new RevWalk(repo);  
-       ObjectId lastcommitID = repo.resolve(Constants.HEAD);
-       
-       RevCommit commit = revWalk.parseCommit(lastcommitID);
+       RevWalk revWalk = new RevWalk(repository);  
+       RevCommit commit = revWalk.parseCommit(commitID);
        RevTree tree = commit.getTree();
        
-       System.out.println("Commit tree "+tree);
-       
-       TreeWalk treeWalk = new TreeWalk(repo);
+       TreeWalk treeWalk = new TreeWalk(repository);
        treeWalk.addTree(tree);
        treeWalk.setRecursive(true);
        treeWalk.setFilter(TreeFilter.ALL);
@@ -99,9 +94,8 @@ public class GitFacade {
            
            System.out.println(treeWalk.getPathString());
            ObjectId id = treeWalk.getObjectId(0);
-           ObjectLoader loader = repo.open(id);
-           
-           allClasses.addAll(Source2ClassConverter.convert(loader.openStream()));   
+           ObjectLoader loader = repository.open(id);
+           allClasses.addAll(Source2ClassConverter.convertFromStream(loader.openStream()));   
            
        }
        return allClasses;

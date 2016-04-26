@@ -5,14 +5,16 @@
  */
 package gitbk;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectStream;
 
@@ -22,25 +24,53 @@ import org.eclipse.jgit.lib.ObjectStream;
  */
 public class Source2ClassConverter {
     
-    
-    public static List<COGClass> convert(ObjectStream inputStream)
+    static List<COGClass> classes = new ArrayList<>();
+    public static List<COGClass> convertFromStream(ObjectStream inputStream)
     {
-        List<COGClass> classes = new ArrayList<>();
-        String regex = "(class (([a-zA-z])+))";
-        Scanner scanner = new Scanner(inputStream);
-        scanner.useDelimiter("\n");
-        while(scanner.hasNext())
-        {
-            Matcher m = Pattern.compile(regex).matcher(scanner.next());
-            if(m.find()){
-                COGClass c = COGClassFactory.newInstance();
-                c.setName(m.group(2));
-                classes.add(c);
-                
-//                System.out.println(m.group(2));
+        CompilationUnit cu = null;
+        classes.clear();
+        
+        try{
+            cu = JavaParser.parse(inputStream);
+            for(TypeDeclaration type:cu.getTypes())
+            {
+                generateCOGClasses(type);
             }
+        }catch(ParseException e)
+        {
+            e.printStackTrace();
         }
+        
         return classes;
+    }
+    
+    private static void generateCOGClasses(TypeDeclaration type)
+    {
+        List<COGClass.COGMethod> currentClassMethods = new ArrayList<>();
+        COGClass currentClass = COGClassFactory.newInstance();
+        currentClass.setName(type.getName());   
+                
+        List<BodyDeclaration> declarations = type.getMembers();
+        for(BodyDeclaration declaration:declarations)
+        {
+            if(declaration instanceof TypeDeclaration)
+            {
+                generateCOGClasses((TypeDeclaration) declaration);
+            }
+            if(declaration instanceof MethodDeclaration)
+            {
+                MethodDeclaration method = (MethodDeclaration) declaration;
+                COGClass.COGMethod currentClassMethod = currentClass.new COGMethod();
+                        
+                currentClassMethod.setName(method.getDeclarationAsString());
+                currentClassMethod.setContent(method.getBody().toString());
+                        
+                currentClassMethods.add(currentClassMethod);
+                        
+            }
+        }        
+        currentClass.setMethods(currentClassMethods);
+        classes.add(currentClass);
     }
     
     
