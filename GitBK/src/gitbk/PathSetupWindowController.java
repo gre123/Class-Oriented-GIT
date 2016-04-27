@@ -5,15 +5,16 @@
  */
 package gitbk;
 
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -49,7 +50,7 @@ public class PathSetupWindowController implements Initializable {
                 }
                 case SET_PATH:
                 {
-                    GitFacade.filePath = pathInputText.toString();
+                    GitFacade.directoryPath = pathInputText.toString();
                 }
             }
         } catch (Exception ex) {
@@ -73,7 +74,7 @@ public class PathSetupWindowController implements Initializable {
         this.behaviour = behaviour;
         if(behaviour.equals(WindowBehaviour.SET_PATH))
         {
-            pathInputText.setText(GitFacade.filePath);
+            pathInputText.setText(GitFacade.directoryPath);
         }  
     }
     public void setParentController(Initializable controller)

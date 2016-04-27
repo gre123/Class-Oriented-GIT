@@ -5,7 +5,6 @@
  */
 package gitbk;
 
-import com.sun.glass.ui.Window;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,7 +19,7 @@ public class GitBK extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        GitFacade.findAllReposInDirectory();
+        //GitFacade.findAllReposInDirectory();
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
         
         Scene scene = new Scene(root);

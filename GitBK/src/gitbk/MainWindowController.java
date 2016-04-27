@@ -2,23 +2,23 @@ package gitbk;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevWalk;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.eclipse.jgit.lib.Constants;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -32,10 +32,10 @@ public class MainWindowController extends COGController {
 
     @FXML
     private Label selectedRepositoryLabel;
-    
+
     @FXML
     TreeView classTreeView;
-    
+
     @FXML
     TextArea sourceTextArea;
 
@@ -46,36 +46,30 @@ public class MainWindowController extends COGController {
 
     @FXML
     void onSelectRepository(ActionEvent event) {
-//        DirectoryChooser directoryChooser = new DirectoryChooser();
-//        File selectedDirectory = directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
+        //Wymusza pokazywanie okna wyboru folderu dopóki nie zostanie on wybrany.
+        while (GitFacade.selectedDirectory == null) {
+            showChooseInitialDirectoryDialog(event);
+        }
 
-        try {          
+        //Otwarcie okna wyboru repozytorium
+        try {
             createChooseRepoWindow();
-
         } catch (IOException e) {
-//            selectedRepositoryLabel.setText("Brak repozytorium");
-          //  Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Brak repozytorium");
-//            alert.setHeaderText("Nie znaleziono repozytorium");
-//            alert.setContentText("W katalogu " + selectedDirectory.toString() + " nie znaleziono repozytorium GIT. Wskaż inny katalog.");
-//            alert.showAndWait();
-            //TODO chyba nie działa poprawnie
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO MainWindowController Initialize
     }
-    
-    
-    private void createChooseRepoWindow() throws IOException
-    {
+
+
+    private void createChooseRepoWindow() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ChooseRepoWindow.fxml"));
         Parent root = (Parent) loader.load();
         loader.<COGController>getController().setParentController(this);
-        
+
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOpacity(1);
@@ -83,39 +77,47 @@ public class MainWindowController extends COGController {
         stage.show();
     }
 
-    public void loadCurrentRepository(Git selectedRepo, String reg) throws Exception
-    {
+    public void loadCurrentRepository(Git selectedRepo, String reg) throws Exception {
         repository = selectedRepo.getRepository();
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
-        
+
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         populateTreeView();
     }
-    
-    private void populateTreeView()
-    {
-        if(classes != null)
-        {
+
+    private void populateTreeView() {
+        if (classes != null) {
 //            Collections.sort(classes);
-            
+
             TreeItem allClasses = new TreeItem("Klasy");
             classTreeView.setRoot(allClasses);
-            
-            for(COGClass cl:classes)
-            {
+
+            for (COGClass cl : classes) {
                 TreeItem item = new TreeItem(cl.getName());
-                
-                for(COGClass.COGMethod method:cl.getMethods())
-                {
+
+                for (COGClass.COGMethod method : cl.getMethods()) {
                     TreeItem methodItem = new TreeItem(method.getName());
                     item.getChildren().add(methodItem);
                 }
- 
+
                 allClasses.getChildren().add(item);
             }
         }
     }
 
+    public void showChooseInitialDirectoryDialog(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        GitFacade.selectedDirectory = directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
+        if (GitFacade.selectedDirectory == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Brak katalogu!");
+            alert.setHeaderText("Nie wybrano katalogu");
+            alert.setContentText("Aby wybrać jedno z dostępnych repozytoriów najpierw trzeba wybrać katalog w którym się one znajdują.");
+            alert.showAndWait();
+        } else {
+            GitFacade.findAllReposInDirectory();
+        }
+    }
 }

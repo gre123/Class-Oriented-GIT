@@ -5,26 +5,28 @@
  */
 package gitbk;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * FXML Controller class
@@ -55,7 +57,7 @@ public class ChooseRepoWindowController extends COGController {
     }
     
     @FXML
-    private void onSelectRepoClicked() throws Exception
+    private void onSelectRepoClicked() throws Exception  //TODO null pointer
     {
         MainWindowController controller = (MainWindowController) parentController;
         String s = (String) reposListView.getSelectionModel().getSelectedItem();
@@ -67,13 +69,15 @@ public class ChooseRepoWindowController extends COGController {
     }
     
     @FXML
-    private void onSetRepoPathClicked()
+    private void onSetRepoPathClicked(ActionEvent event)
     {
-        try {
-            createInputTextWindow(PathSetupWindowController.WindowBehaviour.SET_PATH);
-        } catch (IOException ex) {
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        showChangeDirectoryDialog(event);
+
+//        try {
+//            createInputTextWindow(PathSetupWindowController.WindowBehaviour.SET_PATH);
+//        } catch (IOException ex) {
+//            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
     
     private void createInputTextWindow(PathSetupWindowController.WindowBehaviour behaviour) throws IOException
@@ -93,6 +97,15 @@ public class ChooseRepoWindowController extends COGController {
     {
         ObservableList<String> list = FXCollections.observableArrayList(repos);
         reposListView.setItems(list);
-    }    
-    
+    }
+
+    public void showChangeDirectoryDialog(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File changedDirectory = directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
+        if (changedDirectory != null) {
+            GitFacade.selectedDirectory = changedDirectory;
+            GitFacade.findAllReposInDirectory();
+            setReposListView(GitFacade.repos.keySet());
+        }
+    }
 }
