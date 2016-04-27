@@ -25,7 +25,8 @@ import org.eclipse.jgit.lib.ObjectStream;
 public class Source2ClassConverter {
     
     static List<COGClass> classes = new ArrayList<>();
-    public static List<COGClass> convertFromStream(ObjectStream inputStream)
+    
+    static List<COGClass> convertFromStream(ObjectStream inputStream)
     {
         CompilationUnit cu = null;
         classes.clear();
@@ -48,7 +49,8 @@ public class Source2ClassConverter {
     {
         List<COGClass.COGMethod> currentClassMethods = new ArrayList<>();
         COGClass currentClass = COGClassFactory.newInstance();
-        currentClass.setName(type.getName());   
+        currentClass.setName(type.getName()); 
+        currentClass.setSource((String) type.toStringWithoutComments());
                 
         List<BodyDeclaration> declarations = type.getMembers();
         for(BodyDeclaration declaration:declarations)
@@ -63,7 +65,7 @@ public class Source2ClassConverter {
                 COGClass.COGMethod currentClassMethod = currentClass.new COGMethod();
                         
                 currentClassMethod.setName(method.getDeclarationAsString());
-                currentClassMethod.setContent(method.getBody().toString());
+                currentClassMethod.setSource(method.getBody().toString());
                         
                 currentClassMethods.add(currentClassMethod);
                         
@@ -71,16 +73,7 @@ public class Source2ClassConverter {
         }        
         currentClass.setMethods(currentClassMethods);
         classes.add(currentClass);
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }  
     
     static File[] getSourcesFromPath(Git repo)
     {    

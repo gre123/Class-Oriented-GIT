@@ -76,9 +76,9 @@ public class GitFacade {
         
     }
  
-    public static List<COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
+    public static COGClassList getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
     {
-       List<COGClass> allClasses = new ArrayList<>();
+       COGClassList allClasses = new COGClassList();
        RevWalk revWalk = new RevWalk(repository);  
        RevCommit commit = revWalk.parseCommit(commitID);
        RevTree tree = commit.getTree();
