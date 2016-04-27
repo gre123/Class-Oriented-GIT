@@ -19,6 +19,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.Pane;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.eclipse.jgit.lib.Constants;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -26,7 +39,7 @@ import java.util.ResourceBundle;
 
 public class MainWindowController extends COGController {
 
-    private List<COGClass> classes;
+    private COGClassList classes;
     private Repository repository;
     private RevWalk revWalk;
 
@@ -38,6 +51,12 @@ public class MainWindowController extends COGController {
 
     @FXML
     TextArea sourceTextArea;
+
+    @FXML
+    WebView sourceCodeView;
+
+    @FXML
+    Pane classDetailsPane;
 
     @FXML
     void onSearchClass(ActionEvent event) {
@@ -62,6 +81,7 @@ public class MainWindowController extends COGController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO MainWindowController Initialize
+//        sourceTextArea.setEditable(false);
     }
 
 
@@ -86,9 +106,24 @@ public class MainWindowController extends COGController {
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         populateTreeView();
     }
+    
+    void loadCurrentClass(COGClass currentClass)
+    {
+        classDetailsPane.setVisible(true);
 
-    private void populateTreeView() {
-        if (classes != null) {
+        //Ustawianie szczegółów
+        Label classNameView = (Label) classDetailsPane.getChildren().get(0);
+        classNameView.setText("Nazwa klasy: "+currentClass.getName());
+
+        //Ustawianie kodu źródłowego
+//        sourceTextArea.setText(currentClass.getSource());
+        HighlighterFacade.highlightCode(currentClass.getSource(), sourceCodeView);
+    }
+
+    private void populateTreeView()
+    {
+        if(classes != null)
+        {
 //            Collections.sort(classes);
 
             TreeItem allClasses = new TreeItem("Klasy");
@@ -104,6 +139,18 @@ public class MainWindowController extends COGController {
 
                 allClasses.getChildren().add(item);
             }
+
+            classTreeView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
+
+                @Override
+                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                    int index = (int) newValue-1;
+                    TreeItem item = (TreeItem) classTreeView.getRoot().getChildren().get(index);
+                    loadCurrentClass(classes.get((String) item.getValue()));
+                }
+
+
+            });
         }
     }
 
