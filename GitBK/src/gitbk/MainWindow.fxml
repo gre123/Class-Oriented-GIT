@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
+<VBox prefHeight="1268.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -54,16 +54,12 @@
                   </Label>
           </children>
         </AnchorPane>
-        <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
-          <content>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
-              <children>
-                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.bottomAnchor="504.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="306.0" AnchorPane.topAnchor="14.0" />
-                        <WebView fx:id="sourceCodeView" fontScale="0.7" layoutY="75.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="550.0" prefWidth="600.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="50.0" />
-              </children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <WebView fx:id="sourceCodeView" fontScale="0.8" layoutY="53.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="1257.0" prefWidth="393.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0" />
+          <Label alignment="CENTER" font="$x1" layoutX="65.0" prefHeight="27.0" prefWidth="127.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+               </children>
             </AnchorPane>
-          </content>
-        </ScrollPane>
         <AnchorPane>
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Szczegóły" textAlignment="CENTER" textFill="$x2" wrapText="false" />
