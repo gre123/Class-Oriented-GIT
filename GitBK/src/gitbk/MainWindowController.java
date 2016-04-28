@@ -2,22 +2,15 @@ package gitbk;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -116,8 +109,7 @@ public class MainWindowController extends COGController {
         classNameView.setText("Nazwa klasy: "+currentClass.getName());
 
         //Ustawianie kodu źródłowego
-//        sourceTextArea.setText(currentClass.getSource());
-        HighlighterFacade.highlightCode(currentClass.getSource(), sourceCodeView);
+        new HighlighterFacade().displayHighlightedCode(currentClass.getSource(), sourceCodeView);
     }
 
     private void populateTreeView()

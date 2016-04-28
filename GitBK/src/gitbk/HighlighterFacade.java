@@ -12,22 +12,21 @@ import javafx.scene.web.WebView;
  * @author Grzesiek
  */
 public class HighlighterFacade {
-    public static String htmlPrefix= "<html>\n" +
+    public String htmlPrefix= "<html>\n" +
 "\n" +
 "<head>\n" +
 "<title>Składnia</title>\n" +
-"<script src=\"C:/Users/Grzesiek/Moje rzeczy/rewizje/COG/Class-Oriented-GIT/GitBK/shCore.js\"></script>\n" +
-"<script src=\"C:/Users/Grzesiek/Moje rzeczy/rewizje/COG/Class-Oriented-GIT/GitBK/shBrushJava.js\"></script>\n" +
-"<script src=\"\"></script>\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\"C:/Users/Grzesiek/Moje rzeczy/rewizje/COG/Class-Oriented-GIT/GitBK/shCore.css\">\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\"C:/Users/Grzesiek/Moje rzeczy/rewizje/COG/Class-Oriented-GIT/GitBK/shThemeDefault.css\">\n" +
+"<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script>\n" +
+"<script src=\""+getClass().getResource("syntaxhighlighter/shBrushJava.js")+"\"></script>\n" +
+"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shCore.css")+"\">\n" +
+"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shThemeDefault.css")+"\">\n" +
 "\n" +
 "</head>\n" +
 "<body>\n" +
-"<pre class=\"brush: java\">\n" +
+"<script type=\"syntaxhighlighter\" class = \"brush: java\"><![CDATA[\n" +
 "\n";
     
-    public static String htmlPostfix="</pre>\n"+
+    public static String htmlPostfix="]]></script>\n"+
 "\n" +
 "<script type=\"text/javascript\">\n" +
 "     SyntaxHighlighter.all()\n" +
@@ -36,7 +35,7 @@ public class HighlighterFacade {
 "</body>\n" +
 "</html>";
     
-    public static void highlightCode(String code, WebView webview)
+    public void displayHighlightedCode(String code, WebView webview)
     {
         webview.getEngine().loadContent(htmlPrefix+code+htmlPostfix);
     }

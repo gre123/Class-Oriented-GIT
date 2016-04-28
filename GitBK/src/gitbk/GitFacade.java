@@ -18,8 +18,6 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -45,7 +43,7 @@ public class GitFacade {
 
     public static Set<String> cloneRepo(String url) throws Exception {
         String name = url.substring(url.lastIndexOf("/") + 1);
-        CloneCommand clone = Git.cloneRepository().setURI(url).setDirectory(new File(directoryPath + "/" + name));
+        CloneCommand clone = Git.cloneRepository().setURI(url).setDirectory(new File(selectedDirectory.getAbsolutePath() + "/" + name));
         Git git = clone.call();
         repos.put(getRepoName(git), git);
         return repos.keySet();

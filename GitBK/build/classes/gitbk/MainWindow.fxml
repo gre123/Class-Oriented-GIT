@@ -56,10 +56,10 @@
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
           <content>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
               <children>
-                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                        <WebView fx:id="sourceCodeView" layoutX="14.0" layoutY="73.0" prefHeight="465.0" prefWidth="410.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.bottomAnchor="504.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="306.0" AnchorPane.topAnchor="14.0" />
+                        <WebView fx:id="sourceCodeView" fontScale="0.7" layoutY="75.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="550.0" prefWidth="600.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="50.0" />
               </children>
             </AnchorPane>
           </content>
@@ -69,7 +69,7 @@
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Szczegóły" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <Pane fx:id="classDetailsPane" layoutX="11.0" layoutY="88.0" prefHeight="193.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                      <children>
-                        <Label layoutX="16.0" layoutY="14.0" prefHeight="17.0" prefWidth="192.0" text="Nazwa klasy:" />
+                        <Label layoutX="16.0" layoutY="14.0" text="Nazwa klasy:" />
                         <Label layoutX="15.0" layoutY="38.0" text="Klasa bazowa: " />
                         <Label layoutX="14.0" layoutY="55.0" text="Implementowane interfejsy" />
                         <Label layoutX="14.0" layoutY="72.0" text="Zasięg:" />
