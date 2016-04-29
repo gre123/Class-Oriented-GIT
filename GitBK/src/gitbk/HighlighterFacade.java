@@ -7,10 +7,7 @@ package gitbk;
 
 import javafx.scene.web.WebView;
 
-/**
- *
- * @author Grzesiek
- */
+
 public class HighlighterFacade {
     public String htmlPrefix= "<html>\n" +
 "\n" +

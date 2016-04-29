@@ -18,6 +18,7 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -64,9 +65,9 @@ public class GitFacade {
 
     }
  
-    public static COGClassList getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
+    public static Map<String,COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
     {
-       COGClassList allClasses = new COGClassList();
+       Map<String,COGClass> allClasses = new TreeMap<>();
        RevWalk revWalk = new RevWalk(repository);  
        RevCommit commit = revWalk.parseCommit(commitID);
        RevTree tree = commit.getTree();
@@ -83,7 +84,7 @@ public class GitFacade {
            System.out.println(treeWalk.getPathString());
            ObjectId id = treeWalk.getObjectId(0);
            ObjectLoader loader = repository.open(id);
-           allClasses.addAll(Source2ClassConverter.convertFromStream(loader.openStream()));   
+           allClasses.putAll(Source2ClassConverter.convertFromStream(loader.openStream()));   
            
        }
        return allClasses;

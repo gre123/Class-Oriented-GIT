@@ -1,5 +1,7 @@
 package gitbk;
 
+import gitbk.COGClass.COGMethod;
+import gitbk.COGElement.COGElement;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,6 +13,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +35,7 @@ import org.eclipse.jgit.lib.Constants;
 
 public class MainWindowController extends COGController {
 
-    private COGClassList classes;
+    private Map<String,COGClass> classes;
     private Repository repository;
     private RevWalk revWalk;
 
@@ -100,17 +103,30 @@ public class MainWindowController extends COGController {
         populateTreeView();
     }
     
-    void loadCurrentClass(COGClass currentClass)
+    void loadCurrentElement(COGElement currentElement)
     {
         classDetailsPane.setVisible(true);
 
         //Ustawianie szczegółów
-        Label classNameView = (Label) classDetailsPane.getChildren().get(0);
-        classNameView.setText("Nazwa klasy: "+currentClass.getName());
+        Label nameView = (Label) classDetailsPane.getChildren().get(0);
+        Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
+        if(currentElement instanceof COGClass)
+        {
+            COGClass currentClass = (COGClass) currentElement;
+            
+            nameView.setText("Nazwa klasy: "+currentElement.getName());
+            baseClassNameView.setText("Nazwa klasy bazowej: "+currentClass.getSuperClass());
+        }
+        
+        else {
+            nameView.setText("Nazwa metody: "+currentElement.getName());
+            baseClassNameView.setText("");
+        }
 
         //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(currentClass.getSource(), sourceCodeView);
+        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
+    
 
     private void populateTreeView()
     {
@@ -121,10 +137,10 @@ public class MainWindowController extends COGController {
             TreeItem allClasses = new TreeItem("Klasy");
             classTreeView.setRoot(allClasses);
 
-            for (COGClass cl : classes) {
+            for (COGClass cl : classes.values()) {
                 TreeItem item = new TreeItem(cl.getName());
 
-                for (COGClass.COGMethod method : cl.getMethods()) {
+                for (COGClass.COGMethod method : cl.getMethods().values()) {
                     TreeItem methodItem = new TreeItem(method.getName());
                     item.getChildren().add(methodItem);
                 }
@@ -136,7 +152,14 @@ public class MainWindowController extends COGController {
 
                 @Override
                 public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
-                    loadCurrentClass(classes.get((String) newValue.getValue()));
+                    if(newValue.getParent().equals(classTreeView.getRoot())){
+                       loadCurrentElement(classes.get((String) newValue.getValue()));
+                    }
+                    else {
+                        COGClass currentClass = classes.get((String) newValue.getParent().getValue());
+                        COGMethod currentMethod = currentClass.getMethods().get((String)newValue.getValue());
+                        loadCurrentElement(currentMethod);
+                    }
                 }
 
 

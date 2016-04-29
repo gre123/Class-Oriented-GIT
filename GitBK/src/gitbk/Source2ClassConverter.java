@@ -13,8 +13,9 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectStream;
 
@@ -24,9 +25,9 @@ import org.eclipse.jgit.lib.ObjectStream;
  */
 public class Source2ClassConverter {
     
-    static List<COGClass> classes = new ArrayList<>();
+    static Map<String,COGClass> classes = new TreeMap<>();
     
-    static List<COGClass> convertFromStream(ObjectStream inputStream)
+    static Map<String, COGClass> convertFromStream(ObjectStream inputStream)
     {
         CompilationUnit cu = null;
         classes.clear();
@@ -47,11 +48,11 @@ public class Source2ClassConverter {
     
     private static void generateCOGClasses(TypeDeclaration type)
     {
-        List<COGClass.COGMethod> currentClassMethods = new ArrayList<>();
+        Map<String,COGClass.COGMethod> currentClassMethods = new TreeMap<>();
         COGClass currentClass = COGClassFactory.newInstance();
         currentClass.setName(type.getName()); 
         currentClass.setSource((String) type.toStringWithoutComments());
-                
+        
         List<BodyDeclaration> declarations = type.getMembers();
         for(BodyDeclaration declaration:declarations)
         {
@@ -64,15 +65,15 @@ public class Source2ClassConverter {
                 MethodDeclaration method = (MethodDeclaration) declaration;
                 COGClass.COGMethod currentClassMethod = currentClass.new COGMethod();
                         
-                currentClassMethod.setName(method.getDeclarationAsString());
-                currentClassMethod.setSource(method.getBody().toString());
+                currentClassMethod.setName(method.getName());
+                currentClassMethod.setSource(method.toStringWithoutComments());
                         
-                currentClassMethods.add(currentClassMethod);
+                currentClassMethods.put(currentClassMethod.getName(),currentClassMethod);
                         
             }
         }        
         currentClass.setMethods(currentClassMethods);
-        classes.add(currentClass);
+        classes.put(currentClass.getName(),currentClass);
     }  
     
     static File[] getSourcesFromPath(Git repo)
