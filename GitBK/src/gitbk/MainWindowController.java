@@ -132,17 +132,16 @@ public class MainWindowController extends COGController {
                 allClasses.getChildren().add(item);
             }
 
-            classTreeView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
+            classTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem>() {
 
                 @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    int index = (int) newValue-1;
-                    TreeItem item = (TreeItem) classTreeView.getRoot().getChildren().get(index);
-                    loadCurrentClass(classes.get((String) item.getValue()));
+                public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
+                    loadCurrentClass(classes.get((String) newValue.getValue()));
                 }
 
 
             });
+            classTreeView.setShowRoot(false);
         }
     }
 
