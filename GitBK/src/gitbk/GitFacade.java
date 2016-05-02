@@ -26,7 +26,6 @@ import java.util.TreeMap;
  * @author Grzesiek
  */
 public class GitFacade {
-    public static String directoryPath = "C:/Users/Piotr/Desktop/Konfiguracje";  //TODO do usunięcia!!
     public static File selectedDirectory;
     public static TreeMap<String, Git> repos = new TreeMap<>();
 
@@ -64,29 +63,28 @@ public class GitFacade {
     public static void pushRepo() {
 
     }
- 
-    public static Map<String,COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception
-    {
-       Map<String,COGClass> allClasses = new TreeMap<>();
-       RevWalk revWalk = new RevWalk(repository);  
-       RevCommit commit = revWalk.parseCommit(commitID);
-       RevTree tree = commit.getTree();
-       
-       TreeWalk treeWalk = new TreeWalk(repository);
-       treeWalk.addTree(tree);
-       treeWalk.setRecursive(true);
-       treeWalk.setFilter(TreeFilter.ALL);
-       
-       while(treeWalk.next()){
-           String extension = treeWalk.getPathString().substring(treeWalk.getPathLength()-4);
-           if(!extension.equals("java")) continue;      
-           
-           System.out.println(treeWalk.getPathString());
-           ObjectId id = treeWalk.getObjectId(0);
-           ObjectLoader loader = repository.open(id);
-           allClasses.putAll(Source2ClassConverter.convertFromStream(loader.openStream()));   
-           
-       }
-       return allClasses;
+
+    public static Map<String, COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception {
+        Map<String, COGClass> allClasses = new TreeMap<>();
+        RevWalk revWalk = new RevWalk(repository);
+        RevCommit commit = revWalk.parseCommit(commitID);
+        RevTree tree = commit.getTree();
+
+        TreeWalk treeWalk = new TreeWalk(repository);
+        treeWalk.addTree(tree);
+        treeWalk.setRecursive(true);
+        treeWalk.setFilter(TreeFilter.ALL);
+
+        while (treeWalk.next()) {
+            String extension = treeWalk.getPathString().substring(treeWalk.getPathLength() - 4);
+            if (!extension.equals("java")) continue;
+
+            System.out.println(treeWalk.getPathString());
+            ObjectId id = treeWalk.getObjectId(0);
+            ObjectLoader loader = repository.open(id);
+            allClasses.putAll(Source2ClassConverter.convertFromStream(loader.openStream()));
+
+        }
+        return allClasses;
     }
 }

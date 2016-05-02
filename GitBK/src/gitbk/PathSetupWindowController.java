@@ -27,59 +27,51 @@ public class PathSetupWindowController implements Initializable {
     public enum WindowBehaviour {
         SET_PATH, REPO_PATH
     }
-     
+
     private WindowBehaviour behaviour;
     private Initializable parentController;
-            
+
     @FXML
     private TextField pathInputText;
-    
+
     @FXML
-    private void onOKButtonClicked()
-    {
+    private void onOKButtonClicked() {
         try {
-            switch(behaviour)
-            {
-                case REPO_PATH:
-                {
+            switch (behaviour) {
+                case REPO_PATH: {
                     Set<String> repoNames = GitFacade.cloneRepo(pathInputText.getText());
-                    ChooseRepoWindowController controller = (ChooseRepoWindowController)parentController;
+                    ChooseRepoWindowController controller = (ChooseRepoWindowController) parentController;
                     controller.setReposListView(repoNames);
-                    
+
                     break;
                 }
-                case SET_PATH:
-                {
-                    GitFacade.directoryPath = pathInputText.toString();
+                case SET_PATH: {
+                    //GitFacade.directoryPath = pathInputText.toString();
                 }
             }
         } catch (Exception ex) {
-                Logger.getLogger(PathSetupWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        Stage stage = (Stage)pathInputText.getScene().getWindow();
+            Logger.getLogger(PathSetupWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Stage stage = (Stage) pathInputText.getScene().getWindow();
         stage.close();
     }
-    
-   
+
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
- 
-    }    
-    public void setBehaviour(WindowBehaviour behaviour)
-    {
-        this.behaviour = behaviour;
-        if(behaviour.equals(WindowBehaviour.SET_PATH))
-        {
-            pathInputText.setText(GitFacade.directoryPath);
-        }  
+
     }
-    public void setParentController(Initializable controller)
-    {
+
+    public void setBehaviour(WindowBehaviour behaviour) {
+        this.behaviour = behaviour;
+    }
+
+    public void setParentController(Initializable controller) {
         this.parentController = controller;
     }
-    
+
 }

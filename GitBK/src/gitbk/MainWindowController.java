@@ -2,12 +2,22 @@ package gitbk;
 
 import gitbk.COGClass.COGMethod;
 import gitbk.COGElement.COGElement;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevWalk;
 
@@ -15,19 +25,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.Pane;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.eclipse.jgit.lib.Constants;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -35,7 +32,7 @@ import org.eclipse.jgit.lib.Constants;
 
 public class MainWindowController extends COGController {
 
-    private Map<String,COGClass> classes;
+    private Map<String, COGClass> classes;
     private Repository repository;
     private RevWalk revWalk;
 
@@ -102,36 +99,30 @@ public class MainWindowController extends COGController {
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         populateTreeView();
     }
-    
-    void loadCurrentElement(COGElement currentElement)
-    {
+
+    void loadCurrentElement(COGElement currentElement) {
         classDetailsPane.setVisible(true);
 
         //Ustawianie szczegółów
         Label nameView = (Label) classDetailsPane.getChildren().get(0);
         Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
-        if(currentElement instanceof COGClass)
-        {
+        if (currentElement instanceof COGClass) {
             COGClass currentClass = (COGClass) currentElement;
-            
-            nameView.setText("Nazwa klasy: "+currentElement.getName());
-            baseClassNameView.setText("Nazwa klasy bazowej: "+currentClass.getSuperClass());
-        }
-        
-        else {
-            nameView.setText("Nazwa metody: "+currentElement.getName());
+
+            nameView.setText("Nazwa klasy: " + currentElement.getName());
+            baseClassNameView.setText("Nazwa klasy bazowej: " + currentClass.getSuperClass());
+        } else {
+            nameView.setText("Nazwa metody: " + currentElement.getName());
             baseClassNameView.setText("");
         }
 
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
-    
 
-    private void populateTreeView()
-    {
-        if(classes != null)
-        {
+
+    private void populateTreeView() {
+        if (classes != null) {
 //            Collections.sort(classes);
 
             TreeItem allClasses = new TreeItem("Klasy");
@@ -152,12 +143,11 @@ public class MainWindowController extends COGController {
 
                 @Override
                 public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
-                    if(newValue.getParent().equals(classTreeView.getRoot())){
-                       loadCurrentElement(classes.get((String) newValue.getValue()));
-                    }
-                    else {
+                    if (newValue.getParent().equals(classTreeView.getRoot())) {
+                        loadCurrentElement(classes.get((String) newValue.getValue()));
+                    } else {
                         COGClass currentClass = classes.get((String) newValue.getParent().getValue());
-                        COGMethod currentMethod = currentClass.getMethods().get((String)newValue.getValue());
+                        COGMethod currentMethod = currentClass.getMethods().get((String) newValue.getValue());
                         loadCurrentElement(currentMethod);
                     }
                 }

@@ -37,51 +37,51 @@ public class ChooseRepoWindowController extends COGController {
 
     @FXML
     ListView reposListView;
-    
+
     @FXML
     TextField regexField;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-            setReposListView(GitFacade.repos.keySet());
- 
-    } 
-    
+        setReposListView(GitFacade.repos.keySet());
+
+    }
+
     @FXML
     private void onAddRepoClicked() {
         try {
+
+
             createInputTextWindow(PathSetupWindowController.WindowBehaviour.REPO_PATH);
         } catch (IOException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    @FXML
-    private void onSelectRepoClicked() throws Exception  //TODO null pointer
-    {
-        MainWindowController controller = (MainWindowController) parentController;
-        String s = (String) reposListView.getSelectionModel().getSelectedItem();
-        
-        Git repo = GitFacade.repos.get(s);
-        controller.loadCurrentRepository(repo, regexField.getText());
-        Stage stage = (Stage)reposListView.getScene().getWindow();
-        stage.close();
-    }
-    
-    @FXML
-    private void onSetRepoPathClicked(ActionEvent event)
-    {
-        showChangeDirectoryDialog(event);
 
-//        try {
-//            createInputTextWindow(PathSetupWindowController.WindowBehaviour.SET_PATH);
-//        } catch (IOException ex) {
-//            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+    @FXML
+    private void onSelectRepoClicked() throws Exception {
+        MainWindowController controller = (MainWindowController) parentController;
+        if (!reposListView.getSelectionModel().isEmpty()) {
+            String s = (String) reposListView.getSelectionModel().getSelectedItem();
+
+            Git repo = GitFacade.repos.get(s);
+            controller.loadCurrentRepository(repo, regexField.getText());
+            Stage stage = (Stage) reposListView.getScene().getWindow();
+            stage.close();
+        }
     }
-    
-    private void createInputTextWindow(PathSetupWindowController.WindowBehaviour behaviour) throws IOException
-    {
+
+    @FXML
+    private void onSetRepoPathClicked(ActionEvent event) {
+        File selectedDirectory = showChangeDirectoryDialog(event);
+        if (selectedDirectory != null) {
+            GitFacade.selectedDirectory = selectedDirectory;
+            GitFacade.findAllReposInDirectory();
+            setReposListView(GitFacade.repos.keySet());
+        }
+    }
+
+    private void createInputTextWindow(PathSetupWindowController.WindowBehaviour behaviour) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("PathSetupWindow.fxml"));
         Parent root = (Parent) loader.load();
         loader.<PathSetupWindowController>getController().setBehaviour(behaviour);
@@ -92,20 +92,15 @@ public class ChooseRepoWindowController extends COGController {
         stage.setScene(new Scene(root));
         stage.show();
     }
-    
-    public void setReposListView(Set<String> repos)
-    {
+
+    public void setReposListView(Set<String> repos) {
         ObservableList<String> list = FXCollections.observableArrayList(repos);
         reposListView.setItems(list);
     }
 
-    public void showChangeDirectoryDialog(ActionEvent event) {
+    public File showChangeDirectoryDialog(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        File changedDirectory = directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
-        if (changedDirectory != null) {
-            GitFacade.selectedDirectory = changedDirectory;
-            GitFacade.findAllReposInDirectory();
-            setReposListView(GitFacade.repos.keySet());
-        }
+        return directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
+
     }
 }
