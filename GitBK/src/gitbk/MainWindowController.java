@@ -18,7 +18,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
@@ -115,6 +117,21 @@ public class MainWindowController extends COGController {
             nameView.setText("Nazwa metody: " + currentElement.getName());
             baseClassNameView.setText("");
         }
+
+        RevWalk walk = new RevWalk(repository);
+        RevCommit commit = null;
+        try {
+            ObjectId from = repository.resolve(repository.getFullBranch());
+            commit = walk.parseCommit(from);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Label authorLabel = (Label) classDetailsPane.getChildren().get(5);
+        authorLabel.setText("Autor: " + commit.getAuthorIdent().getName());
+
+        Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(6);
+        lastModifyDateLabel.setText("Data ostatniej modyfikacji: " + commit.getAuthorIdent().getWhen());
 
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
