@@ -97,6 +97,7 @@ public class MainWindowController extends COGController {
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
+        GitFacade.git = new Git(repository);
 
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         populateTreeView();
@@ -136,7 +137,6 @@ public class MainWindowController extends COGController {
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
-
 
     private void populateTreeView() {
         if (classes != null) {

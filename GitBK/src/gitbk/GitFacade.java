@@ -7,17 +7,25 @@ package gitbk;
 
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,6 +35,7 @@ import java.util.TreeMap;
  */
 public class GitFacade {
     public static File selectedDirectory;
+    public static Git git; //TODO przejrzenie kodu
     public static TreeMap<String, Git> repos = new TreeMap<>();
 
     public static void findAllReposInDirectory() {
@@ -86,5 +95,65 @@ public class GitFacade {
 
         }
         return allClasses;
+    }
+
+    public static void findAllCommits() { //TODO dostosowanie do potrzeb
+        Iterable<RevCommit> commits = null;   //TODO może jakiś filtr?
+        try {
+            commits = git.log().all().call();
+            int count = 0;
+            for (RevCommit commit : commits) {
+                count++;
+                System.out.println("LogCommit: " + commit);
+            }
+            System.out.println("Count of commits: " + count);
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) { //TODO niedziała?
+        Repository repository = git.getRepository();
+        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommitId);
+        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommitId);
+
+        try {
+            List<DiffEntry> diff = git.diff().
+                    setOldTree(oldTreeParser).
+                    setNewTree(newTreeParser).
+                    setPathFilter(PathFilter.create(fileName)).
+                    call();
+            for (DiffEntry entry : diff) {
+                System.out.println("Entry: " + entry + ", from: " + entry.getOldId() + ", to: " + entry.getNewId());
+                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
+                    formatter.setRepository(repository);
+                    formatter.format(entry);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static AbstractTreeIterator prepareTreeParser(Repository repository, String commitId) {
+        RevWalk walk = new RevWalk(repository);
+        try {
+            RevCommit commit = walk.parseCommit(ObjectId.fromString(commitId));
+            RevTree tree = walk.parseTree(commit.getTree().getId());
+
+            CanonicalTreeParser treeParser = new CanonicalTreeParser();
+            ObjectReader reader = repository.newObjectReader();
+            treeParser.reset(reader, tree.getId());
+
+            walk.dispose();
+            return treeParser;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
