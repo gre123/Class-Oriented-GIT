@@ -19,6 +19,11 @@ public class COGClass implements Comparable<COGClass>,COGElement{
     private List<String> implementedInterfaces;
     private boolean isAbstract;
     private String classAccess = "";
+    
+    private List<String> authors;
+    private String lastChange;
+    private String createDate;
+    private List<String> changingCommits;
 
     @Override
     public int compareTo(COGClass t) {
@@ -30,12 +35,20 @@ public class COGClass implements Comparable<COGClass>,COGElement{
         private String methodName;
         private String methodAccess;
         private String methodSource;
+        private String methodReturnType;
+        private boolean isAbstract;
+        
+        private List<String> authors;
+        private String lastChange;
+        private String createDate;
+        private List<String> changingCommits;
         
         @Override
         public void setName(String name)
         {
             methodName = name;
         }
+        @Override
         public void setAccess(String access)
         {
             methodAccess = access;
@@ -54,6 +67,61 @@ public class COGClass implements Comparable<COGClass>,COGElement{
         public String getSource()
         {
             return methodSource;
+        }
+
+        @Override
+        public void setIsAbstract(boolean isAbstract) {
+            this.isAbstract = isAbstract;
+        }
+
+        @Override
+        public void setAuthors(List<String> authors) {
+            this.authors = authors;
+        }
+
+        @Override
+        public void setLastChange(String lastChange) {
+            this.lastChange = lastChange;
+        }
+
+        @Override
+        public void setCreateDate(String createDate) {
+            this.createDate = createDate;
+        }
+
+        @Override
+        public void setChangingCommits(List<String> changingCommits) {
+            this.changingCommits = changingCommits;
+        }
+
+        @Override
+        public boolean isAbstract() {
+            return isAbstract;
+        }
+
+        @Override
+        public String getAccess() {
+            return methodAccess;
+        }
+
+        @Override
+        public List<String> getAuthors() {
+            return authors;
+        }
+
+        @Override
+        public String getLastChange() {
+            return lastChange;
+        }
+
+        @Override
+        public String getCreateDate() {
+            return createDate;
+        }
+
+        @Override
+        public List<String> getChangingCommits() {
+            return changingCommits;
         }
     }
     
@@ -81,6 +149,27 @@ public class COGClass implements Comparable<COGClass>,COGElement{
     {
         implementedInterfaces = interfaces;
     }
+
+    @Override
+    public void setAuthors(List<String> authors) {
+        this.authors = authors;
+    }
+
+    @Override
+    public void setLastChange(String lastChange) {
+        this.lastChange = lastChange;
+    }
+
+    @Override
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    @Override
+    public void setChangingCommits(List<String> changingCommits) {
+        this.changingCommits = changingCommits;
+    }
+    
     
     @Override
     public String getSource()
@@ -106,4 +195,46 @@ public class COGClass implements Comparable<COGClass>,COGElement{
     {
         return implementedInterfaces;
     }
+
+    @Override
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    @Override
+    public void setIsAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
+    }
+
+    @Override
+    public String getAccess() {
+        return classAccess;
+    }
+
+    @Override
+    public void setAccess(String access) {
+        this.classAccess = access;
+    }
+
+    @Override
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    @Override
+    public String getLastChange() {
+        return lastChange;
+    }
+
+    @Override
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    @Override
+    public List<String> getChangingCommits() {
+        return changingCommits;
+    }
+    
+    
 }

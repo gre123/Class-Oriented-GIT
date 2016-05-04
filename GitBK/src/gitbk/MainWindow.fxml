@@ -121,6 +121,21 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </Pane>
+                  <Pane fx:id="methodDetailsPane" prefHeight="193.0" prefWidth="200.0" visible="false">
+                     <children>
+                        <Label layoutX="16.0" layoutY="14.0" text="Nazwa metody: " />
+                        <Label layoutX="14.0" layoutY="55.0" text="Typ zwracany: " />
+                        <Label layoutX="14.0" layoutY="72.0" text="Zasięg:" />
+                        <Label layoutX="14.0" layoutY="89.0" text="Abstrakcyjna: " />
+                        <Label layoutX="15.0" layoutY="150.0" text="Autorzy:" />
+                        <Label layoutX="17.0" layoutY="167.0" text="Ostatnia zmiana:" />
+                        <Label layoutX="15.0" layoutY="133.0" text="Data utworzenia metody:" />
+                        <Label layoutX="17.0" layoutY="184.0" text="Commity wprowadzające zmiany:" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </Pane>
           </children>
         </AnchorPane>
       </items>
