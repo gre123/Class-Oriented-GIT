@@ -25,6 +25,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -37,6 +39,8 @@ public class MainWindowController extends COGController {
     private Map<String, COGClass> classes;
     private Repository repository;
     private RevWalk revWalk;
+
+    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @FXML
     private Label selectedRepositoryLabel;
@@ -142,11 +146,11 @@ public class MainWindowController extends COGController {
             e.printStackTrace();
         }
 
-        Label authorLabel = (Label) classDetailsPane.getChildren().get(5);
+        Label authorLabel = (Label) classDetailsPane.getChildren().get(6);
         authorLabel.setText(commit.getAuthorIdent().getName());
 
-        Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(6);
-        lastModifyDateLabel.setText(commit.getAuthorIdent().getWhen().toString());
+        Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(7);
+        lastModifyDateLabel.setText(df.format(commit.getAuthorIdent().getWhen()));
 
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
