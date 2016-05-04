@@ -19,6 +19,11 @@ public class COGClass implements Comparable<COGClass>,COGElement{
     private List<String> implementedInterfaces;
     private boolean isAbstract;
     private String classAccess = "";
+    
+    private List<String> authors;
+    private String lastChange;
+    private String createDate;
+    private List<String> changingCommits;
 
     @Override
     public int compareTo(COGClass t) {
@@ -30,6 +35,13 @@ public class COGClass implements Comparable<COGClass>,COGElement{
         private String methodName;
         private String methodAccess;
         private String methodSource;
+        private String methodReturnType;
+        private boolean isAbstract;
+        
+        private List<String> authors;
+        private String lastChange;
+        private String createDate;
+        private List<String> changingCommits;
         
         @Override
         public void setName(String name)
@@ -106,4 +118,21 @@ public class COGClass implements Comparable<COGClass>,COGElement{
     {
         return implementedInterfaces;
     }
+
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public void setIsAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
+    }
+
+    public String getClassAccess() {
+        return classAccess;
+    }
+
+    public void setClassAccess(String classAccess) {
+        this.classAccess = classAccess;
+    }
+    
 }

@@ -52,6 +52,9 @@ public class MainWindowController extends COGController {
 
     @FXML
     Pane classDetailsPane;
+    
+    @FXML
+    Pane methodDetailsPane;
 
     @FXML
     void onSearchClass(ActionEvent event) {
@@ -106,6 +109,15 @@ public class MainWindowController extends COGController {
         classDetailsPane.setVisible(true);
 
         //Ustawianie szczegółów
+        initializeDetailsPane(currentElement);
+            
+        //Ustawianie kodu źródłowego
+        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
+    }
+
+    private void initializeDetailsPane(COGElement currentElement)
+    {
+        
         Label nameView = (Label) classDetailsPane.getChildren().get(0);
         Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
         if (currentElement instanceof COGClass) {
@@ -132,12 +144,8 @@ public class MainWindowController extends COGController {
 
         Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(6);
         lastModifyDateLabel.setText("Data ostatniej modyfikacji: " + commit.getAuthorIdent().getWhen());
-
-        //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
-
-
+    
     private void populateTreeView() {
         if (classes != null) {
 //            Collections.sort(classes);
