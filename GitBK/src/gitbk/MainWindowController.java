@@ -57,6 +57,15 @@ public class MainWindowController extends COGController {
     Pane methodDetailsPane;
 
     @FXML
+    ListView<String> commitsListView;
+
+    @FXML
+    private Label leftStatusLabel;
+
+    @FXML
+    private Label rightStatusLabel;
+
+    @FXML
     void onSearchClass(ActionEvent event) {
 
     }
@@ -100,8 +109,12 @@ public class MainWindowController extends COGController {
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
+        GitFacade.git = new Git(repository);
+        GitFacade.findAllCommits();
+        rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
 
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
+        leftStatusLabel.setText("Ilość klas: " + classes.size());
         populateTreeView();
     }
 
@@ -123,11 +136,13 @@ public class MainWindowController extends COGController {
         if (currentElement instanceof COGClass) {
             COGClass currentClass = (COGClass) currentElement;
 
-            nameView.setText("Nazwa klasy: " + currentElement.getName());
-            baseClassNameView.setText("Nazwa klasy bazowej: " + currentClass.getSuperClass());
+            nameView.setText(currentElement.getName());
+            baseClassNameView.setText(currentClass.getSuperClass());
+            ((Label) classDetailsPane.getChildren().get(8)).setText("Nazwa klasy:");
         } else {
-            nameView.setText("Nazwa metody: " + currentElement.getName());
+            nameView.setText(currentElement.getName());
             baseClassNameView.setText("");
+            ((Label) classDetailsPane.getChildren().get(8)).setText("Nazwa metody:");
         }
 
         RevWalk walk = new RevWalk(repository);
@@ -140,12 +155,14 @@ public class MainWindowController extends COGController {
         }
 
         Label authorLabel = (Label) classDetailsPane.getChildren().get(5);
-        authorLabel.setText("Autor: " + commit.getAuthorIdent().getName());
+        authorLabel.setText(commit.getAuthorIdent().getName());
 
         Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(6);
         lastModifyDateLabel.setText("Data ostatniej modyfikacji: " + commit.getAuthorIdent().getWhen());
+        //Ustawianie kodu źródłowego
+        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
-    
+
     private void populateTreeView() {
         if (classes != null) {
 //            Collections.sort(classes);
