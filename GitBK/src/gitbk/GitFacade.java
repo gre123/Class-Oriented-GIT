@@ -20,15 +20,12 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
+import org.eclipse.jgit.treewalk.filter.PathSuffixFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Grzesiek
@@ -36,6 +33,7 @@ import java.util.TreeMap;
 public class GitFacade {
     public static File selectedDirectory;
     public static Git git; //TODO przejrzenie kodu
+    public static LinkedList<RevCommit> commitList = new LinkedList<>();
     public static TreeMap<String, Git> repos = new TreeMap<>();
 
     public static void findAllReposInDirectory() {
@@ -97,16 +95,13 @@ public class GitFacade {
         return allClasses;
     }
 
-    public static void findAllCommits() { //TODO dostosowanie do potrzeb
-        Iterable<RevCommit> commits = null;   //TODO może jakiś filtr?
+    public static void findAllCommits() {
+        commitList.clear();
         try {
-            commits = git.log().all().call();
-            int count = 0;
+            Iterable<RevCommit> commits = git.log().all().call();
             for (RevCommit commit : commits) {
-                count++;
-                System.out.println("LogCommit: " + commit);
+                commitList.add(commit);
             }
-            System.out.println("Count of commits: " + count);
         } catch (GitAPIException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -114,7 +109,7 @@ public class GitFacade {
         }
     }
 
-    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) { //TODO niedziała?
+    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) {
         Repository repository = git.getRepository();
         AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommitId);
         AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommitId);
@@ -123,7 +118,7 @@ public class GitFacade {
             List<DiffEntry> diff = git.diff().
                     setOldTree(oldTreeParser).
                     setNewTree(newTreeParser).
-                    setPathFilter(PathFilter.create(fileName)).
+                    setPathFilter(PathSuffixFilter.create(fileName)).
                     call();
             for (DiffEntry entry : diff) {
                 System.out.println("Entry: " + entry + ", from: " + entry.getOldId() + ", to: " + entry.getNewId());
