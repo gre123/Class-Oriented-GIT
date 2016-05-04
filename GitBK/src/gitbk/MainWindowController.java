@@ -25,6 +25,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -40,6 +42,8 @@ public class MainWindowController extends COGController {
     private Repository repository;
     private RevWalk revWalk;
 
+    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
     @FXML
     private Label selectedRepositoryLabel;
 
@@ -54,7 +58,7 @@ public class MainWindowController extends COGController {
 
     @FXML
     Pane classDetailsPane;
-    
+
     @FXML
     Pane methodDetailsPane;
 
@@ -130,14 +134,13 @@ public class MainWindowController extends COGController {
         //Ustawianie szczegółów
         
         initializeDetailsPane(currentElement);
-            
+
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
 
     private void initializeDetailsPane(COGElement currentElement)
     {        
-        //Zakładka podstawowa
         if (currentElement instanceof COGClass) {
             
             COGClass currentClass = (COGClass) currentElement;
@@ -193,8 +196,7 @@ public class MainWindowController extends COGController {
         Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
         Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
         Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
-        ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
-        
+        ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);  
         
         lastModifyDateLabel.setText("" + commit.getAuthorIdent().getWhen());
         authorLabel.setText(commit.getAuthorIdent().getName());
