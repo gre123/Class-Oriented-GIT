@@ -9,10 +9,14 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,8 +54,22 @@ public class Source2ClassConverter {
     {
         Map<String,COGClass.COGMethod> currentClassMethods = new TreeMap<>();
         COGClass currentClass = COGClassFactory.newInstance();
+       
+        if(type instanceof ClassOrInterfaceDeclaration)
+        {
+            ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) type;
+            if(!classDeclaration.getExtends().isEmpty())currentClass.setSuperClass(classDeclaration.getExtends().get(0).toString());
+            currentClass.setImplementedInterfaces(convertImplementedInterfaces(classDeclaration));
+        }
+        
         currentClass.setName(type.getName()); 
         currentClass.setSource((String) type.toStringWithoutComments());
+        currentClass.setAccess(ModifierSet.getAccessSpecifier(type.getModifiers()).toString());
+ 
+        currentClass.setIsAbstract(ModifierSet.isAbstract(type.getModifiers()));
+        
+        currentClass.setBeginLine(type.getBeginLine());
+        currentClass.setEndLine(type.getEndLine());  
         
         List<BodyDeclaration> declarations = type.getMembers();
         for(BodyDeclaration declaration:declarations)
@@ -67,6 +85,13 @@ public class Source2ClassConverter {
                         
                 currentClassMethod.setName(method.getName());
                 currentClassMethod.setSource(method.toStringWithoutComments());
+                currentClassMethod.setAccess(ModifierSet.getAccessSpecifier(method.getModifiers()).toString());
+                currentClassMethod.setIsAbstract(ModifierSet.isAbstract(method.getModifiers()));
+                currentClassMethod.setReturnType(method.getType().toString());
+                
+                
+                currentClassMethod.setBeginLine(method.getBeginLine());
+                currentClassMethod.setEndLine(method.getEndLine());
                         
                 currentClassMethods.put(currentClassMethod.getName(),currentClassMethod);
                         
@@ -90,5 +115,15 @@ public class Source2ClassConverter {
             }
             
         });
+    }
+    
+    static List<String> convertImplementedInterfaces(ClassOrInterfaceDeclaration classDeclaration)
+    {
+        List<String> interfaces = new ArrayList<>();
+        for(ClassOrInterfaceType i: classDeclaration.getImplements())
+        {
+            interfaces.add(i.getName());
+        }
+        return interfaces;
     }
 }

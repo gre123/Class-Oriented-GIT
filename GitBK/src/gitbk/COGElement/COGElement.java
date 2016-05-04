@@ -11,24 +11,43 @@ import java.util.List;
  *
  * @author Grzesiek
  */
-public interface COGElement {
+public abstract class COGElement {
+    private int beginLine;      
+    private int endLine;      
+            
+    public abstract void setName(String name);
+    public abstract void setSource(String source);
+    public abstract void setIsAbstract(boolean isAbstract);
+    public abstract void setAccess(String access);
+    public abstract void setAuthors(List<String> authors);
+    public abstract void setLastChange(String lastChange);
+    public abstract void setCreateDate(String createDate);
+    public abstract void setChangingCommits(List<String> changingCommits);
+
+    public void setBeginLine(int beginLine) {
+        this.beginLine = beginLine;
+    }
+
+    public void setEndLine(int endLine) {
+        this.endLine = endLine;
+    }
     
-    public void setName(String name);
-    public void setSource(String source);
-    public void setIsAbstract(boolean isAbstract);
-    public void setAccess(String access);
-    public void setAuthors(List<String> authors);
-    public void setLastChange(String lastChange);
-    public void setCreateDate(String createDate);
-    public void setChangingCommits(List<String> changingCommits);
+    public abstract String getName();
+    public abstract String getSource();
+    public abstract boolean isAbstract();
+    public abstract String getAccess();
+    public abstract List<String> getAuthors();
+    public abstract String getLastChange();
+    public abstract String getCreateDate();
+    public abstract List<String> getChangingCommits();
+
+    public int getBeginLine() {
+        return beginLine;
+    }
+
+    public int getEndLine() {
+        return endLine;
+    }
     
-    public String getName();
-    public String getSource();
-    public boolean isAbstract();
-    public String getAccess();
-    public List<String> getAuthors();
-    public String getLastChange();
-    public String getCreateDate();
-    public List<String> getChangingCommits();
            
 }

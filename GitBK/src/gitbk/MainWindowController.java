@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -57,6 +59,9 @@ public class MainWindowController extends COGController {
     Pane methodDetailsPane;
 
     @FXML
+    Pane commitDetailsPane;
+    
+    @FXML
     ListView<String> commitsListView;
 
     @FXML
@@ -64,6 +69,9 @@ public class MainWindowController extends COGController {
 
     @FXML
     private Label rightStatusLabel;
+    
+    @FXML
+    private ListView interfacesListView;
 
     @FXML
     void onSearchClass(ActionEvent event) {
@@ -119,9 +127,8 @@ public class MainWindowController extends COGController {
     }
 
     void loadCurrentElement(COGElement currentElement) {
-        classDetailsPane.setVisible(true);
-
         //Ustawianie szczegółów
+        
         initializeDetailsPane(currentElement);
             
         //Ustawianie kodu źródłowego
@@ -129,22 +136,51 @@ public class MainWindowController extends COGController {
     }
 
     private void initializeDetailsPane(COGElement currentElement)
-    {
-        
-        Label nameView = (Label) classDetailsPane.getChildren().get(0);
-        Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
+    {        
+        //Zakładka podstawowa
         if (currentElement instanceof COGClass) {
+            
             COGClass currentClass = (COGClass) currentElement;
+            
+            Label nameView = (Label) classDetailsPane.getChildren().get(0);
+            Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
+            ListView implementedInterfacesView = (ListView) classDetailsPane.getChildren().get(2);
+            Label accessView = (Label) classDetailsPane.getChildren().get(3);
+            Label abstractView = (Label) classDetailsPane.getChildren().get(4);
 
             nameView.setText(currentElement.getName());
             baseClassNameView.setText(currentClass.getSuperClass());
-            ((Label) classDetailsPane.getChildren().get(8)).setText("Nazwa klasy:");
+            ObservableList interfaces = FXCollections.observableArrayList(currentClass.getImplementedInterfaces());
+            implementedInterfacesView.setItems(interfaces);
+            accessView.setText(currentClass.getAccess());
+            String isAbstract = currentClass.isAbstract()?"Tak":"Nie";
+            abstractView.setText(isAbstract);
+            
+            methodDetailsPane.setVisible(false);
+            classDetailsPane.setVisible(true);
+            commitDetailsPane.setVisible(true);
         } else {
+            
+            COGClass.COGMethod currentMethod = (COGClass.COGMethod) currentElement;
+                    
+            Label nameView = (Label) methodDetailsPane.getChildren().get(0);
+            Label returnTypeView = (Label) methodDetailsPane.getChildren().get(1);
+            Label accessView = (Label) methodDetailsPane.getChildren().get(2);
+            Label abstractView = (Label) methodDetailsPane.getChildren().get(3);
+            
             nameView.setText(currentElement.getName());
-            baseClassNameView.setText("");
-            ((Label) classDetailsPane.getChildren().get(8)).setText("Nazwa metody:");
+            returnTypeView.setText(currentMethod.getReturnType());
+            accessView.setText(currentElement.getAccess());
+            String isAbstract = currentElement.isAbstract()?"Tak":"Nie";
+            abstractView.setText(isAbstract);
+            
+            classDetailsPane.setVisible(false);
+            methodDetailsPane.setVisible(true);
+            commitDetailsPane.setVisible(true);
         }
 
+        //Zakładka rozszerzona
+        
         RevWalk walk = new RevWalk(repository);
         RevCommit commit = null;
         try {
@@ -154,13 +190,15 @@ public class MainWindowController extends COGController {
             e.printStackTrace();
         }
 
-        Label authorLabel = (Label) classDetailsPane.getChildren().get(5);
+        Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
+        Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
+        Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
+        ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
+        
+        
+        lastModifyDateLabel.setText("" + commit.getAuthorIdent().getWhen());
         authorLabel.setText(commit.getAuthorIdent().getName());
 
-        Label lastModifyDateLabel = (Label) classDetailsPane.getChildren().get(6);
-        lastModifyDateLabel.setText("Data ostatniej modyfikacji: " + commit.getAuthorIdent().getWhen());
-        //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
 
     private void populateTreeView() {

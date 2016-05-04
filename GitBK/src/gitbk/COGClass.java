@@ -6,42 +6,47 @@
 package gitbk;
 
 import gitbk.COGElement.COGElement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class COGClass implements Comparable<COGClass>,COGElement{
+public class COGClass extends COGElement implements Comparable<COGClass>{
     
-    private String className="";
+    private String className="---";
     private Map<String, COGMethod> classMethods;
-    private String classSource="";
+    private String classSource="---";
     
-    private String superClass="";
-    private List<String> implementedInterfaces;
+    private String superClass="---";
+    private List<String> implementedInterfaces = new ArrayList<>();
     private boolean isAbstract;
-    private String classAccess = "";
+    private String classAccess = "---";
     
-    private List<String> authors;
+    private List<String> authors = new ArrayList<>();
     private String lastChange;
     private String createDate;
-    private List<String> changingCommits;
+    private List<String> changingCommits = new ArrayList<>();
 
     @Override
     public int compareTo(COGClass t) {
         return className.compareTo(t.className);
     }
     
-    public class COGMethod implements COGElement
+    public class COGMethod extends COGElement
     {
         private String methodName;
         private String methodAccess;
         private String methodSource;
-        private String methodReturnType;
+        private String methodReturnType="---";
         private boolean isAbstract;
         
-        private List<String> authors;
+        private List<String> authors = new ArrayList<>();
         private String lastChange;
         private String createDate;
-        private List<String> changingCommits;
+        private List<String> changingCommits = new ArrayList<>();
+
+        public void setReturnType(String methodReturnType) {
+            this.methodReturnType = methodReturnType;
+        }
         
         @Override
         public void setName(String name)
@@ -123,6 +128,12 @@ public class COGClass implements Comparable<COGClass>,COGElement{
         public List<String> getChangingCommits() {
             return changingCommits;
         }
+
+        public String getReturnType() {
+            return methodReturnType;
+        }
+        
+        
     }
     
     @Override
