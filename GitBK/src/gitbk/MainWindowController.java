@@ -34,7 +34,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
@@ -123,8 +126,9 @@ public class MainWindowController extends COGController {
     @FXML void onPushRepository(ActionEvent event)
     {
         try {
+            
             GitFacade.pushRepo(repository);
-            showGitResultDialog("GIT PULL:", "Push command executed successfully");
+            showGitResultDialog("GIT PUSH:", "Push command executed successfully");
         } catch (GitAPIException ex) {
             showGitResultDialog("GIT PUSH:", ex.getMessage());
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -310,9 +314,44 @@ public class MainWindowController extends COGController {
     private void showGitResultDialog(String header,String content)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Git Pull");
-        alert.setHeaderText("Pull zakończony");
+        alert.setTitle("Git Command");
+        alert.setHeaderText(header);
         alert.setContentText(content);
         alert.show();
+    }
+    private LoginForm showLoginDialog()
+    {
+        Dialog<LoginForm> dialog = new Dialog<>();
+        dialog.setTitle("Logowanie");
+        dialog.setHeaderText("Podaj dane do uwierzytelnienia operacji");
+        Label usernameLabel = new Label("Username: ");
+        Label passwordLabel = new Label("Password: ");
+        TextField username = new TextField();
+        TextField password = new TextField();
+        
+        GridPane grid = new GridPane();
+        grid.add(usernameLabel, 1, 1);
+        grid.add(username, 2, 1);
+        grid.add(passwordLabel, 1, 2);
+        grid.add(password, 2, 2);
+        dialog.getDialogPane().setContent(grid);
+        
+        ButtonType buttonOK = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(buttonOK);
+        
+        dialog.setResultConverter(new Callback<ButtonType, LoginForm>() {
+            
+            @Override
+            public LoginForm call(ButtonType param) {
+                return new LoginForm("","");
+            }
+        }); 
+        
+        Optional<LoginForm> result = dialog.showAndWait();
+        if(result.isPresent())
+        {
+            return result.get();
+        }
+        return null;
     }
 }
