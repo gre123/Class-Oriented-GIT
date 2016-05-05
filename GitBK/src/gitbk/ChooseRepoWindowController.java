@@ -65,7 +65,7 @@ public class ChooseRepoWindowController extends COGController {
             String s = (String) reposListView.getSelectionModel().getSelectedItem();
 
             Git repo = GitFacade.repos.get(s);
-            controller.loadCurrentRepository(repo, regexField.getText());
+            controller.loadCurrentRepository(repo);
             Stage stage = (Stage) reposListView.getScene().getWindow();
             stage.close();
         }

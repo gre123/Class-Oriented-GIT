@@ -26,6 +26,10 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import org.eclipse.jgit.api.MergeResult;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.transport.PushResult;
 
 /**
  * @author Grzesiek
@@ -63,14 +67,28 @@ public class GitFacade {
 
     }
 
-    public static void commitRepo() {
-
+    public static void commitRepo(Repository repository, String message) throws GitAPIException{
+        Git git = new Git(repository);
+        git.commit().setMessage(message).call();
     }
 
-    public static void pushRepo() {
-
+    public static void pushRepo(Repository repository) throws GitAPIException{
+       Git git = new Git(repository);
+       PushCommand pushCommand = git.push();
+       Iterable<PushResult> result = pushCommand.call();
+       
     }
 
+    public static String pullRepo(Repository repository) throws GitAPIException{
+        Git git = new Git(repository);
+        PullResult result = null;
+        org.eclipse.jgit.api.PullCommand pullComand = git.pull();
+            result = pullComand.call();
+            MergeResult mergeResult = result.getMergeResult();
+            
+            return "Merge Status: "+mergeResult.getMergeStatus().toString();
+
+    }
     public static Map<String, COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception {
         Map<String, COGClass> allClasses = new TreeMap<>();
         RevWalk revWalk = new RevWalk(repository);

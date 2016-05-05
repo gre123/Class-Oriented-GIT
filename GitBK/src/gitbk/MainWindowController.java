@@ -28,9 +28,14 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.HBox;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
  * Created by Piotr on 2016-04-22.
@@ -78,6 +83,53 @@ public class MainWindowController extends COGController {
     private ListView interfacesListView;
 
     @FXML
+    private HBox gitButtonsBox;
+    
+    @FXML
+    void onPullRepository(ActionEvent event)
+    {
+        leftStatusLabel.setText("Wykonywanie git pull");
+        try {
+            String status = GitFacade.pullRepo(repository);
+            leftStatusLabel.setText(status);
+            loadCurrentRepository(new Git(repository));
+            
+        } catch (Exception ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @FXML
+    void onCommitRepository(ActionEvent event)
+    {
+        
+        TextInputDialog dialog = new TextInputDialog("Commit przy pomocy COG");
+        dialog.setTitle("Wiadomosc commitu");
+        dialog.setHeaderText("Podaj wiadomosc commitu");
+        
+        Optional<String> result = dialog.showAndWait();
+         if(result.isPresent()){
+             try{
+                leftStatusLabel.setText("Wykonywanie git commit");
+                GitFacade.commitRepo(repository, result.get());
+                leftStatusLabel.setText("Ilość klas: "+classes.size());
+             }catch(Exception e){
+                 e.printStackTrace();
+             }
+         }
+    }
+    
+    @FXML void onPushRepository(ActionEvent event)
+    {
+        try {
+            leftStatusLabel.setText("Wykonywanie git push");
+            GitFacade.pushRepo(repository);
+            leftStatusLabel.setText("Ilość klas: "+classes.size());
+        } catch (GitAPIException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @FXML
     void onSearchClass(ActionEvent event) {
 
     }
@@ -102,8 +154,7 @@ public class MainWindowController extends COGController {
         //TODO MainWindowController Initialize
 //        sourceTextArea.setEditable(false);
     }
-
-
+    
     private void createChooseRepoWindow() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ChooseRepoWindow.fxml"));
         Parent root = (Parent) loader.load();
@@ -116,7 +167,7 @@ public class MainWindowController extends COGController {
         stage.show();
     }
 
-    public void loadCurrentRepository(Git selectedRepo, String reg) throws Exception {
+    public void loadCurrentRepository(Git selectedRepo) throws Exception {
         repository = selectedRepo.getRepository();
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
@@ -128,6 +179,8 @@ public class MainWindowController extends COGController {
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         leftStatusLabel.setText("Ilość klas: " + classes.size());
         populateTreeView();
+        
+        gitButtonsBox.setVisible(true);
     }
 
     void loadCurrentElement(COGElement currentElement) {
