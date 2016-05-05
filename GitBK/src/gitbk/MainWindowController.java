@@ -88,13 +88,13 @@ public class MainWindowController extends COGController {
     @FXML
     void onPullRepository(ActionEvent event)
     {
-        leftStatusLabel.setText("Wykonywanie git pull");
         try {
             String status = GitFacade.pullRepo(repository);
-            leftStatusLabel.setText(status);
             loadCurrentRepository(new Git(repository));
-            
+            showGitResultDialog("GIT PULL:", status);
+
         } catch (Exception ex) {
+            showGitResultDialog("GIT PULL:", ex.getMessage());
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -110,11 +110,12 @@ public class MainWindowController extends COGController {
         Optional<String> result = dialog.showAndWait();
          if(result.isPresent()){
              try{
-                leftStatusLabel.setText("Wykonywanie git commit");
                 GitFacade.commitRepo(repository, result.get());
-                leftStatusLabel.setText("Ilość klas: "+classes.size());
+                showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
              }catch(Exception e){
+                 showGitResultDialog("GIT COMMIT", e.getMessage());
                  e.printStackTrace();
+                 
              }
          }
     }
@@ -122,10 +123,10 @@ public class MainWindowController extends COGController {
     @FXML void onPushRepository(ActionEvent event)
     {
         try {
-            leftStatusLabel.setText("Wykonywanie git push");
             GitFacade.pushRepo(repository);
-            leftStatusLabel.setText("Ilość klas: "+classes.size());
+            showGitResultDialog("GIT PULL:", "Push command executed successfully");
         } catch (GitAPIException ex) {
+            showGitResultDialog("GIT PUSH:", ex.getMessage());
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -305,5 +306,13 @@ public class MainWindowController extends COGController {
         } else {
             GitFacade.findAllReposInDirectory();
         }
+    }
+    private void showGitResultDialog(String header,String content)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Git Pull");
+        alert.setHeaderText("Pull zakończony");
+        alert.setContentText(content);
+        alert.show();
     }
 }
