@@ -9,10 +9,7 @@ import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -32,7 +29,7 @@ import java.util.*;
 public class GitFacade {
     public static File selectedDirectory;
     public static Git git; //TODO przejrzenie kodu
-    public static LinkedList<RevCommit> commitList = new LinkedList<>();
+    public static LinkedList<String> commitList = new LinkedList<>();
     public static Map<String, List<COGClass>> classesInFileMap = new HashMap<>();
     public static TreeMap<String, Git> repos = new TreeMap<>();
 
@@ -113,21 +110,54 @@ public class GitFacade {
         return allClasses;
     }
 
-    public static void findAllCommits() {
-        commitList.clear();
-        try {
-            Iterable<RevCommit> commits = git.log().all().call();
-            for (RevCommit commit : commits) {
-                commitList.add(commit);
+    public static void checkAllCommitsDiff() throws IOException, GitAPIException {
+        Repository repository = git.getRepository();
+        String head = repository.resolve(Constants.HEAD).getName();
+
+        for (String commit : commitList) {
+            if (!commit.equals(head)) {
+                System.out.println("\nNew:" + head + "   Old:" + commit);
+                checkSingleCommitDiff(head, commit);
+                head = commit;
             }
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) {
+    public static void checkSingleCommitDiff(String newCommit, String oldCommit) throws GitAPIException, IOException {
+        Repository repository = git.getRepository();
+
+        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommit);
+        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommit);
+
+        List<DiffEntry> diff = git.diff().
+                setOldTree(oldTreeParser).
+                setNewTree(newTreeParser).
+                call();
+
+        for (DiffEntry entry : diff) {
+            if (classesInFileMap.containsKey(entry.getNewPath())) {
+                System.out.println(entry.getNewPath());
+                List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
+                for (COGClass cogClass : classList) {
+                    cogClass.addCommitToList(newCommit);
+                    for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
+                        cogMethod.addCommitToList(newCommit);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void findAllCommits() throws IOException, GitAPIException {
+        commitList.clear();
+        Iterable<RevCommit> commits = git.log().all().call();
+        for (RevCommit commit : commits) {
+            commitList.add(commit.getName());
+        }
+
+    }
+
+    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) throws IOException {
         Repository repository = git.getRepository();
         AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommitId);
         AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommitId);
@@ -152,21 +182,16 @@ public class GitFacade {
         }
     }
 
-    private static AbstractTreeIterator prepareTreeParser(Repository repository, String commitId) {
+    private static AbstractTreeIterator prepareTreeParser(Repository repository, String commitId) throws IOException {
         RevWalk walk = new RevWalk(repository);
-        try {
-            RevCommit commit = walk.parseCommit(ObjectId.fromString(commitId));
-            RevTree tree = walk.parseTree(commit.getTree().getId());
+        RevCommit commit = walk.parseCommit(ObjectId.fromString(commitId));
+        RevTree tree = walk.parseTree(commit.getTree().getId());
 
-            CanonicalTreeParser treeParser = new CanonicalTreeParser();
-            ObjectReader reader = repository.newObjectReader();
-            treeParser.reset(reader, tree.getId());
+        CanonicalTreeParser treeParser = new CanonicalTreeParser();
+        ObjectReader reader = repository.newObjectReader();
+        treeParser.reset(reader, tree.getId());
 
-            walk.dispose();
-            return treeParser;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        walk.dispose();
+        return treeParser;
     }
 }

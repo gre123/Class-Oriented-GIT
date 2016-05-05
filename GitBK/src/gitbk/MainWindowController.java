@@ -179,6 +179,8 @@ public class MainWindowController extends COGController {
         leftStatusLabel.setText("Ilość klas: " + classes.size());
         populateTreeView();
 
+        GitFacade.checkAllCommitsDiff();
+
         gitButtonsBox.setVisible(true);
     }
 
@@ -189,10 +191,6 @@ public class MainWindowController extends COGController {
 
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
-
-        GitFacade.findFileCommits("c2045a3bced642996f1d10b4d3f77d30474b313a",
-                "0b5cc4da268907796526d45b09e6de74b4de66a3",
-                "MainWindowController.java");
     }
 
     private void initializeDetailsPane(COGElement currentElement) {
@@ -242,8 +240,7 @@ public class MainWindowController extends COGController {
         RevWalk walk = new RevWalk(repository);
         RevCommit commit = null;
         try {
-            ObjectId from = repository.resolve(repository.getFullBranch());
-            commit = walk.parseCommit(from);
+            commit = walk.parseCommit(ObjectId.fromString(currentElement.getLastCommit()));
         } catch (IOException e) {
             e.printStackTrace();
         }
