@@ -5,8 +5,7 @@
  */
 package gitbk;
 
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -17,19 +16,15 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathSuffixFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import org.eclipse.jgit.api.MergeResult;
-import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.PushCommand;
-import org.eclipse.jgit.transport.PushResult;
 
 /**
  * @author Grzesiek
@@ -38,6 +33,7 @@ public class GitFacade {
     public static File selectedDirectory;
     public static Git git; //TODO przejrzenie kodu
     public static LinkedList<RevCommit> commitList = new LinkedList<>();
+    public static Map<String, List<COGClass>> classesInFileMap = new HashMap<>();
     public static TreeMap<String, Git> repos = new TreeMap<>();
 
     public static void findAllReposInDirectory() {
@@ -67,28 +63,29 @@ public class GitFacade {
 
     }
 
-    public static void commitRepo(Repository repository, String message) throws GitAPIException{
+    public static void commitRepo(Repository repository, String message) throws GitAPIException {
         Git git = new Git(repository);
         git.commit().setMessage(message).call();
     }
 
-    public static void pushRepo(Repository repository) throws GitAPIException{
-       Git git = new Git(repository);
-       PushCommand pushCommand = git.push();
-       Iterable<PushResult> result = pushCommand.call();
-       
+    public static void pushRepo(Repository repository) throws GitAPIException {
+        Git git = new Git(repository);
+        PushCommand pushCommand = git.push();
+        Iterable<PushResult> result = pushCommand.call();
+
     }
 
-    public static String pullRepo(Repository repository) throws GitAPIException{
+    public static String pullRepo(Repository repository) throws GitAPIException {
         Git git = new Git(repository);
         PullResult result = null;
         org.eclipse.jgit.api.PullCommand pullComand = git.pull();
-            result = pullComand.call();
-            MergeResult mergeResult = result.getMergeResult();
-            
-            return "Merge Status: "+mergeResult.getMergeStatus().toString();
+        result = pullComand.call();
+        MergeResult mergeResult = result.getMergeResult();
+
+        return "Merge Status: " + mergeResult.getMergeStatus().toString();
 
     }
+
     public static Map<String, COGClass> getCOGClassesFromCommit(Repository repository, ObjectId commitID) throws Exception {
         Map<String, COGClass> allClasses = new TreeMap<>();
         RevWalk revWalk = new RevWalk(repository);
@@ -100,6 +97,8 @@ public class GitFacade {
         treeWalk.setRecursive(true);
         treeWalk.setFilter(TreeFilter.ALL);
 
+        classesInFileMap.clear();
+
         while (treeWalk.next()) {
             String extension = treeWalk.getPathString().substring(treeWalk.getPathLength() - 4);
             if (!extension.equals("java")) continue;
@@ -107,8 +106,9 @@ public class GitFacade {
             System.out.println(treeWalk.getPathString());
             ObjectId id = treeWalk.getObjectId(0);
             ObjectLoader loader = repository.open(id);
-            allClasses.putAll(Source2ClassConverter.convertFromStream(loader.openStream()));
-
+            Map<String, COGClass> classes = Source2ClassConverter.convertFromStream(loader.openStream());
+            allClasses.putAll(classes);
+            classesInFileMap.put(treeWalk.getPathString(), new LinkedList<>(classes.values()));
         }
         return allClasses;
     }
@@ -136,8 +136,8 @@ public class GitFacade {
             List<DiffEntry> diff = git.diff().
                     setOldTree(oldTreeParser).
                     setNewTree(newTreeParser).
-                    setPathFilter(PathSuffixFilter.create(fileName)).
-                    call();
+                    //setPathFilter(PathSuffixFilter.create(fileName)).
+                            call();
             for (DiffEntry entry : diff) {
                 System.out.println("Entry: " + entry + ", from: " + entry.getOldId() + ", to: " + entry.getNewId());
                 try (DiffFormatter formatter = new DiffFormatter(System.out)) {
