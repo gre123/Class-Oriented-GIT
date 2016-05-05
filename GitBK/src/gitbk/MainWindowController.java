@@ -250,11 +250,13 @@ public class MainWindowController extends COGController {
         Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
         Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
         Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
-        ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
+        //ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
 
         lastModifyDateLabel.setText(df.format(commit.getAuthorIdent().getWhen()));
         authorLabel.setText(commit.getAuthorIdent().getName());
 
+        ObservableList<String> commitsList = FXCollections.observableArrayList(currentElement.getCommitIdList());
+        commitsListView.setItems(commitsList);
     }
 
     private void populateTreeView() {

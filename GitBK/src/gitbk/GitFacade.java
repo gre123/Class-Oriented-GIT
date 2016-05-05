@@ -116,7 +116,7 @@ public class GitFacade {
 
         for (String commit : commitList) {
             if (!commit.equals(head)) {
-                System.out.println("\nNew:" + head + "   Old:" + commit);
+                //System.out.println("\nNew:" + head + "   Old:" + commit);
                 checkSingleCommitDiff(head, commit);
                 head = commit;
             }
@@ -136,7 +136,7 @@ public class GitFacade {
 
         for (DiffEntry entry : diff) {
             if (classesInFileMap.containsKey(entry.getNewPath())) {
-                System.out.println(entry.getNewPath());
+                //System.out.println(entry.getNewPath());
                 List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
                 for (COGClass cogClass : classList) {
                     cogClass.addCommitToList(newCommit);
