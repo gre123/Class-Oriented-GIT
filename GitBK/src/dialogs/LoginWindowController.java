@@ -5,6 +5,7 @@
  */
 package dialogs;
 
+import gitbk.COGController;
 import gitbk.MainWindowController;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,7 +18,7 @@ import javafx.scene.control.TextField;
  *
  * @author Grzesiek
  */
-public class LoginWindowController implements Initializable {
+public class LoginWindowController extends COGController {
 
     @FXML
     TextField usernameField;

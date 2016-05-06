@@ -34,10 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 
@@ -123,16 +120,19 @@ public class MainWindowController extends COGController {
          }
     }
     
-    @FXML void onPushRepository(ActionEvent event)
+    @FXML 
+    void onPushRepository(ActionEvent event)
     {
         try {
-            
+            showLoginWindow();
             GitFacade.pushRepo(repository);
             showGitResultDialog("GIT PUSH:", "Push command executed successfully");
         } catch (GitAPIException ex) {
             showGitResultDialog("GIT PUSH:", ex.getMessage());
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }catch(Exception e){
+            e.printStackTrace();
+        };
     }
 
     @FXML
@@ -321,6 +321,19 @@ public class MainWindowController extends COGController {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.show();
+    }
+    
+    private void showLoginWindow() throws Exception
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../dialogs/LoginWindow.fxml"));
+        Parent root = (Parent) loader.load();
+        loader.<COGController>getController().setParentController(this);
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setScene(new Scene(root));
+        stage.show();
     }
     
 }

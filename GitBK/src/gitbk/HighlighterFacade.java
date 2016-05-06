@@ -43,7 +43,7 @@ public class HighlighterFacade {
     
     public static String expandSourceCode(String sourceCode, String additionalCode, int beginLine)
     {
-        String prefix = "]]></script>\n<div style=\"text-align:left; color:gray; cursor: arrow;\" title=\"";
+        String prefix = "]]></script>\n<div style=\"text-align:left; color:gray; cursor: pointer;\" title=\"";
         String postfix = "\">COMMIT CHANGE-----------------------------------------------------------------------------------------------</div><script type=\"syntaxhighlighter\" class = \"brush: java; gutter:false\"><![CDATA[\n\n";
         
         String[] sourceLines = sourceCode.split("\n");
