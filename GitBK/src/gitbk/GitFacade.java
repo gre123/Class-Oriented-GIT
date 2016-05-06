@@ -121,7 +121,7 @@ public class GitFacade {
 
         for (String commit : commitList) {
             if (!commit.equals(head)) {
-                System.out.println("\nNew:" + head + "   Old:" + commit);
+                //System.out.println("\nNew:" + head + "   Old:" + commit);
                 if (!prevCommit.equals("")) {
                     changedFiles = checkInnerCommitsDiff(prevCommit, commit);
                 }
@@ -146,18 +146,22 @@ public class GitFacade {
         for (DiffEntry entry : diff) {
             if (classesInFileMap.containsKey(entry.getNewPath()) &&
                     changedFiles.contains(entry.getNewPath())) {
-                System.out.println(entry.getNewPath());
+                //System.out.println(entry.getNewPath());
                 formatter.format(entry);
                 Matcher matcher = pattern.matcher(outputStream.toString());
 
                 while (matcher.find()) {
-                    System.out.println(matcher.group(1) + "," + matcher.group(2) + "  " + matcher.group(3) + "," + matcher.group(4));
+                    //System.out.println(matcher.group(1) + "," + matcher.group(2) + "  " + matcher.group(3) + "," + matcher.group(4));
 
+                    //dodanie commitów do list w elementach
                     List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
+                    int start = Integer.valueOf(matcher.group(3));
+                    int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
                     for (COGClass cogClass : classList) {
-                        cogClass.addCommitToList(newCommit);
-                        for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
-                            cogMethod.addCommitToList(newCommit);
+                        if (cogClass.addCommitToList(oldCommit, start, end)) {
+                            for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
+                                cogMethod.addCommitToList(oldCommit, start, end);
+                            }
                         }
                     }
                 }

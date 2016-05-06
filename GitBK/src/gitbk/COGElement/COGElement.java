@@ -72,8 +72,14 @@ public abstract class COGElement {
         return commitIdList;
     }
 
-    public void addCommitToList(String oldCommit) {
-        commitIdList.add(oldCommit);
+    public boolean addCommitToList(String commitId, int start, int end) {
+        if (beginLine <= end || endLine >= start) {
+            if (!commitIdList.contains(commitId)) {
+                commitIdList.add(commitId);
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getLastCommit() {
