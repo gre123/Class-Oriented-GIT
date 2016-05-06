@@ -15,6 +15,7 @@ public abstract class COGElement {
     private int beginLine;
     private int endLine;
     private List<String> commitIdList = new ArrayList<>();
+    private List<String> commitsDiff = new ArrayList<>();
 
     public abstract void setName(String name);
 
@@ -72,10 +73,11 @@ public abstract class COGElement {
         return commitIdList;
     }
 
-    public boolean addCommitToList(String commitId, int start, int end) {
+    public boolean addCommitToList(String commitId, String diff, int start, int end) {
         if (beginLine <= end || endLine >= start) {
             if (!commitIdList.contains(commitId)) {
                 commitIdList.add(commitId);
+                commitsDiff.add(diff);
                 return true;
             }
         }
