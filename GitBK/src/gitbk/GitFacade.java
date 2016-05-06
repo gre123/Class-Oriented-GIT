@@ -113,6 +113,18 @@ public class GitFacade {
         return allClasses;
     }
 
+    ///////////////////////////////
+    // Obsługa commitów i różnic //
+    ///////////////////////////////
+
+    public static void findAllCommits() throws IOException, GitAPIException {
+        commitList.clear();
+        Iterable<RevCommit> commits = git.log().all().call();
+        for (RevCommit commit : commits) {
+            commitList.add(commit.getName());
+        }
+    }
+
     public static void checkAllCommitsDiff() throws IOException, GitAPIException {
         Repository repository = git.getRepository();
         String head = repository.resolve(Constants.HEAD).getName();
@@ -131,10 +143,10 @@ public class GitFacade {
         }
     }
 
-    public static void checkHeadCommitDiff(String newCommit, String oldCommit, List<String> changedFiles) throws GitAPIException, IOException {
+    private static void checkHeadCommitDiff(String newCommitId, String oldCommitId, List<String> changedFiles) throws GitAPIException, IOException {
         Repository repository = git.getRepository();
 
-        List<DiffEntry> diff = checkCommitDiff(newCommit, oldCommit, repository);
+        List<DiffEntry> diff = checkCommitDiff(newCommitId, oldCommitId, repository);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DiffFormatter formatter = new DiffFormatter(outputStream);
@@ -158,24 +170,23 @@ public class GitFacade {
                     int start = Integer.valueOf(matcher.group(3));
                     int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
                     for (COGClass cogClass : classList) {
-                        if (cogClass.addCommitToList(oldCommit, start, end)) {
+                        if (cogClass.addCommitToList(oldCommitId, outputStream.toString(), start, end)) {
                             for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
-                                cogMethod.addCommitToList(oldCommit, start, end);
+                                cogMethod.addCommitToList(oldCommitId, outputStream.toString(), start, end);
                             }
                         }
                     }
                 }
-
             }
             outputStream.reset();
         }
     }
 
-    public static List<String> checkInnerCommitsDiff(String newCommit, String oldCommit) throws GitAPIException, IOException {
+    private static List<String> checkInnerCommitsDiff(String newCommitId, String oldCommitId) throws GitAPIException, IOException {
         Repository repository = git.getRepository();
         List<String> changedFiles = new LinkedList<>();
 
-        List<DiffEntry> diff = checkCommitDiff(newCommit, oldCommit, repository);
+        List<DiffEntry> diff = checkCommitDiff(newCommitId, oldCommitId, repository);
 
         for (DiffEntry entry : diff) {
             if (classesInFileMap.containsKey(entry.getNewPath())) {
@@ -186,45 +197,11 @@ public class GitFacade {
         return changedFiles;
     }
 
-    public static List<DiffEntry> checkCommitDiff(String newCommit, String oldCommit, Repository repository) throws GitAPIException, IOException {
-        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommit);
-        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommit);
-
-        return git.diff().setOldTree(oldTreeParser).setNewTree(newTreeParser).call();
-    }
-
-    public static void findAllCommits() throws IOException, GitAPIException {
-        commitList.clear();
-        Iterable<RevCommit> commits = git.log().all().call();
-        for (RevCommit commit : commits) {
-            commitList.add(commit.getName());
-        }
-
-    }
-
-    public static void findFileCommits(String newCommitId, String oldCommitId, String fileName) throws IOException {
-        Repository repository = git.getRepository();
+    private static List<DiffEntry> checkCommitDiff(String newCommitId, String oldCommitId, Repository repository) throws GitAPIException, IOException {
         AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommitId);
         AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommitId);
 
-        try {
-            List<DiffEntry> diff = git.diff().
-                    setOldTree(oldTreeParser).
-                    setNewTree(newTreeParser).
-                    //setPathFilter(PathSuffixFilter.create(fileName)).
-                            call();
-            for (DiffEntry entry : diff) {
-                System.out.println("Entry: " + entry + ", from: " + entry.getOldId() + ", to: " + entry.getNewId());
-                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
-                    formatter.setRepository(repository);
-                    formatter.format(entry);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-        }
+        return git.diff().setOldTree(oldTreeParser).setNewTree(newTreeParser).call();
     }
 
     private static AbstractTreeIterator prepareTreeParser(Repository repository, String commitId) throws IOException {
