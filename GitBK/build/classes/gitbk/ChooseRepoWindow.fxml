@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.ChooseRepoWindowController">
+   <children>
+      <VBox layoutX="250.0" layoutY="110.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="135.0" text="Podłączone repozytoria" />
+            <ListView fx:id="reposListView" prefHeight="299.0" prefWidth="600.0" />
+            <HBox prefHeight="36.0" prefWidth="600.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onSelectRepoClicked" text="Wybierz repozytorium" />
+                  <Button mnemonicParsing="false" onAction="#onAddRepoClicked" text="Sklonuj inne repozytorium" />
+                  <Button mnemonicParsing="false" onAction="#onSetRepoPathClicked" text="Zmień ścieżkę z repozytoriami" />
+               </children>
+            </HBox>
+            <TextField fx:id="regexField" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
