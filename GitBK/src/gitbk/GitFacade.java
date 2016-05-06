@@ -19,9 +19,12 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Grzesiek
@@ -113,39 +116,77 @@ public class GitFacade {
     public static void checkAllCommitsDiff() throws IOException, GitAPIException {
         Repository repository = git.getRepository();
         String head = repository.resolve(Constants.HEAD).getName();
+        String prevCommit = "";
+        List<String> changedFiles = new LinkedList<>();
 
         for (String commit : commitList) {
             if (!commit.equals(head)) {
-                //System.out.println("\nNew:" + head + "   Old:" + commit);
-                checkSingleCommitDiff(head, commit);
-                head = commit;
+                System.out.println("\nNew:" + head + "   Old:" + commit);
+                if (!prevCommit.equals("")) {
+                    changedFiles = checkInnerCommitsDiff(prevCommit, commit);
+                }
+                checkHeadCommitDiff(head, commit, changedFiles);
+                prevCommit = commit;
             }
         }
     }
 
-    public static void checkSingleCommitDiff(String newCommit, String oldCommit) throws GitAPIException, IOException {
+    public static void checkHeadCommitDiff(String newCommit, String oldCommit, List<String> changedFiles) throws GitAPIException, IOException {
         Repository repository = git.getRepository();
 
-        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommit);
-        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommit);
+        List<DiffEntry> diff = checkCommitDiff(newCommit, oldCommit, repository);
 
-        List<DiffEntry> diff = git.diff().
-                setOldTree(oldTreeParser).
-                setNewTree(newTreeParser).
-                call();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        DiffFormatter formatter = new DiffFormatter(outputStream);
+        formatter.setRepository(repository);
+
+        //Wzór do wyszukania ciągu znaków pokroju "@@ -10,1 +15,5 @@"
+        Pattern pattern = Pattern.compile("@@ -(\\d+),(\\d+) \\+(\\d+),(\\d+) @@");
+
+        for (DiffEntry entry : diff) {
+            if (classesInFileMap.containsKey(entry.getNewPath()) &&
+                    changedFiles.contains(entry.getNewPath())) {
+                System.out.println(entry.getNewPath());
+                formatter.format(entry);
+                Matcher matcher = pattern.matcher(outputStream.toString());
+
+                while (matcher.find()) {
+                    System.out.println(matcher.group(1) + "," + matcher.group(2) + "  " + matcher.group(3) + "," + matcher.group(4));
+
+                    List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
+                    for (COGClass cogClass : classList) {
+                        cogClass.addCommitToList(newCommit);
+                        for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
+                            cogMethod.addCommitToList(newCommit);
+                        }
+                    }
+                }
+
+            }
+            outputStream.reset();
+        }
+    }
+
+    public static List<String> checkInnerCommitsDiff(String newCommit, String oldCommit) throws GitAPIException, IOException {
+        Repository repository = git.getRepository();
+        List<String> changedFiles = new LinkedList<>();
+
+        List<DiffEntry> diff = checkCommitDiff(newCommit, oldCommit, repository);
 
         for (DiffEntry entry : diff) {
             if (classesInFileMap.containsKey(entry.getNewPath())) {
-                //System.out.println(entry.getNewPath());
-                List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
-                for (COGClass cogClass : classList) {
-                    cogClass.addCommitToList(newCommit);
-                    for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
-                        cogMethod.addCommitToList(newCommit);
-                    }
-                }
+                changedFiles.add(entry.getNewPath());
             }
         }
+
+        return changedFiles;
+    }
+
+    public static List<DiffEntry> checkCommitDiff(String newCommit, String oldCommit, Repository repository) throws GitAPIException, IOException {
+        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, newCommit);
+        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, oldCommit);
+
+        return git.diff().setOldTree(oldTreeParser).setNewTree(newTreeParser).call();
     }
 
     public static void findAllCommits() throws IOException, GitAPIException {
