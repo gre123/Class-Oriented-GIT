@@ -197,7 +197,7 @@ public class MainWindowController extends COGController {
         initializeDetailsPane(currentElement);
 
         //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
+        new HighlighterFacade().displayHighlightedCode(HighlighterFacade.expandSourceCode(currentElement.getSource(),"+costamcostam\n-costamcostam",4), sourceCodeView);
     }
 
     private void initializeDetailsPane(COGElement currentElement) {
@@ -322,39 +322,5 @@ public class MainWindowController extends COGController {
         alert.setContentText(content);
         alert.show();
     }
-    private LoginForm showLoginDialog()
-    {
-        Dialog<LoginForm> dialog = new Dialog<>();
-        dialog.setTitle("Logowanie");
-        dialog.setHeaderText("Podaj dane do uwierzytelnienia operacji");
-        Label usernameLabel = new Label("Username: ");
-        Label passwordLabel = new Label("Password: ");
-        TextField username = new TextField();
-        TextField password = new TextField();
-        
-        GridPane grid = new GridPane();
-        grid.add(usernameLabel, 1, 1);
-        grid.add(username, 2, 1);
-        grid.add(passwordLabel, 1, 2);
-        grid.add(password, 2, 2);
-        dialog.getDialogPane().setContent(grid);
-        
-        ButtonType buttonOK = new ButtonType("OK", ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(buttonOK);
-        
-        dialog.setResultConverter(new Callback<ButtonType, LoginForm>() {
-            
-            @Override
-            public LoginForm call(ButtonType param) {
-                return new LoginForm("","");
-            }
-        }); 
-        
-        Optional<LoginForm> result = dialog.showAndWait();
-        if(result.isPresent())
-        {
-            return result.get();
-        }
-        return null;
-    }
+    
 }
