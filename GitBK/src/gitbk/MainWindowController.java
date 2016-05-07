@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -34,6 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -47,6 +50,7 @@ public class MainWindowController extends COGController {
     private Map<String, COGClass> classes;
     private Repository repository;
     private RevWalk revWalk;
+    private COGElement actualShowedElement;
 
     private DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -112,6 +116,7 @@ public class MainWindowController extends COGController {
              try{
                 GitFacade.commitRepo(repository, result.get());
                 showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
+                loadCurrentRepository(new Git(repository));
              }catch(Exception e){
                  showGitResultDialog("GIT COMMIT", e.getMessage());
                  e.printStackTrace();
@@ -125,11 +130,6 @@ public class MainWindowController extends COGController {
     {
         try {
             showLoginWindow();
-            GitFacade.pushRepo(repository);
-            showGitResultDialog("GIT PUSH:", "Push command executed successfully");
-        } catch (GitAPIException ex) {
-            showGitResultDialog("GIT PUSH:", ex.getMessage());
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }catch(Exception e){
             e.printStackTrace();
         };
@@ -159,6 +159,20 @@ public class MainWindowController extends COGController {
     public void initialize(URL location, ResourceBundle resources) {
         //TODO MainWindowController Initialize
 //        sourceTextArea.setEditable(false);
+        commitsListView.setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+            @Override
+            public void handle(MouseEvent event) {
+               if(actualShowedElement != null){
+                    List<String> commits = actualShowedElement.commitsDiff;
+                    String additionalInfo = commits.get(commitsListView.getSelectionModel().getSelectedIndex());
+                    String result = HighlighterFacade.expandSourceCode(actualShowedElement.getSource(),additionalInfo,10);
+                    new HighlighterFacade().displayHighlightedCode(result, sourceCodeView);
+               }
+            }
+            
+            
+        });
     }
 
     private void createChooseRepoWindow() throws IOException {
@@ -194,10 +208,12 @@ public class MainWindowController extends COGController {
     void loadCurrentElement(COGElement currentElement) {
         //Ustawianie szczegółów
 
+        actualShowedElement = currentElement;
         initializeDetailsPane(currentElement);
+        
 
         //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(HighlighterFacade.expandSourceCode(currentElement.getSource(),"+costamcostam\n-costamcostam",4), sourceCodeView);
+        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
     }
 
     private void initializeDetailsPane(COGElement currentElement) {
@@ -325,7 +341,7 @@ public class MainWindowController extends COGController {
     
     private void showLoginWindow() throws Exception
     {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../dialogs/LoginWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
         Parent root = (Parent) loader.load();
         loader.<COGController>getController().setParentController(this);
 
@@ -336,4 +352,15 @@ public class MainWindowController extends COGController {
         stage.show();
     }
     
+    public void onPushLoginClicked(String username, String password)
+    {
+        try{
+        
+        String result = GitFacade.pushRepo(repository, username, password);
+        showGitResultDialog("GIT PUSH:", result);
+        } catch (GitAPIException ex) {
+            showGitResultDialog("GIT PUSH:", ex.getMessage());
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

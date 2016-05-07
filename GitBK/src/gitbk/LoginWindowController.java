@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dialogs;
+package gitbk;
 
-import gitbk.COGController;
-import gitbk.MainWindowController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -26,12 +25,14 @@ public class LoginWindowController extends COGController {
     @FXML
     TextField passwordField;
     
-    private Initializable parentController;
-    
     @FXML
     private void loginButtonClicked()
     {
         MainWindowController controller = (MainWindowController) parentController;
+        Stage stage = (Stage) usernameField.getScene().getWindow();
+        stage.close();
+        controller.onPushLoginClicked(usernameField.getText(), passwordField.getText());
+
     }
     /**
      * Initializes the controller class.

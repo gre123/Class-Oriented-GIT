@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 /**
  * @author Grzesiek
@@ -65,13 +67,22 @@ public class GitFacade {
 
     public static void commitRepo(Repository repository, String message) throws GitAPIException {
         Git git = new Git(repository);
-        git.commit().setMessage(message).call();
+        git.add().addFilepattern(".").call();
+        git.commit().setAll(true).setMessage(message).call();
+        
     }
 
-    public static void pushRepo(Repository repository) throws GitAPIException {
+    public static String pushRepo(Repository repository, String username, String password) throws GitAPIException {
         Git git = new Git(repository);
+        CredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
         PushCommand pushCommand = git.push();
+        pushCommand.setCredentialsProvider(provider).setForce(true).setPushAll();
+        
         Iterable<PushResult> result = pushCommand.call();
+        
+        if(!result.iterator().next().getMessages().isEmpty()) 
+            return result.iterator().next().getMessages();
+        else return "OK";
 
     }
 

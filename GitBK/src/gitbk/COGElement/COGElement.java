@@ -15,7 +15,7 @@ public abstract class COGElement {
     private int beginLine;
     private int endLine;
     private List<String> commitIdList = new ArrayList<>();
-    private List<String> commitsDiff = new ArrayList<>();
+    public List<String> commitsDiff = new ArrayList<>();
 
     public abstract void setName(String name);
 
