@@ -4,6 +4,8 @@ import gitbk.COGClass.COGMethod;
 import gitbk.COGElement.COGElement;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,12 +13,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -27,18 +31,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.util.Callback;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
 
 /**
@@ -90,8 +85,7 @@ public class MainWindowController extends COGController {
     private HBox gitButtonsBox;
 
     @FXML
-    void onPullRepository(ActionEvent event)
-    {
+    void onPullRepository(ActionEvent event) {
         try {
             String status = GitFacade.pullRepo(repository);
             loadCurrentRepository(new Git(repository));
@@ -111,22 +105,22 @@ public class MainWindowController extends COGController {
         dialog.setHeaderText("Podaj wiadomosc commitu");
 
         Optional<String> result = dialog.showAndWait();
-         if(result.isPresent()){
-             try{
+        if (result.isPresent()) {
+            try {
                 GitFacade.commitRepo(repository, result.get());
                 showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
-             }catch(Exception e){
-                 showGitResultDialog("GIT COMMIT", e.getMessage());
-                 e.printStackTrace();
+            } catch (Exception e) {
+                showGitResultDialog("GIT COMMIT", e.getMessage());
+                e.printStackTrace();
 
-             }
-         }
+            }
+        }
     }
-    
-    @FXML void onPushRepository(ActionEvent event)
-    {
+
+    @FXML
+    void onPushRepository(ActionEvent event) {
         try {
-            
+
             GitFacade.pushRepo(repository);
             showGitResultDialog("GIT PUSH:", "Push command executed successfully");
         } catch (GitAPIException ex) {
@@ -194,13 +188,17 @@ public class MainWindowController extends COGController {
     void loadCurrentElement(COGElement currentElement) {
         //Ustawianie szczegółów
 
-        initializeDetailsPane(currentElement);
+        try {
+            initializeDetailsPane(currentElement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(HighlighterFacade.expandSourceCode(currentElement.getSource(),"+costamcostam\n-costamcostam",4), sourceCodeView);
+        new HighlighterFacade().displayHighlightedCode(HighlighterFacade.expandSourceCode(currentElement.getSource(), "+costamcostam\n-costamcostam", 4), sourceCodeView);
     }
 
-    private void initializeDetailsPane(COGElement currentElement) {
+    private void initializeDetailsPane(COGElement currentElement) throws IOException {
         if (currentElement instanceof COGClass) {
 
             COGClass currentClass = (COGClass) currentElement;
@@ -245,23 +243,25 @@ public class MainWindowController extends COGController {
         //Zakładka rozszerzona
 
         RevWalk walk = new RevWalk(repository);
-        RevCommit commit = null;
-        try {
-            commit = walk.parseCommit(ObjectId.fromString(currentElement.getLastCommit()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RevCommit lastCommit = walk.parseCommit(ObjectId.fromString(currentElement.getLastCommitId()));
 
         Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
         Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
         Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
         //ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
 
-        lastModifyDateLabel.setText(df.format(commit.getAuthorIdent().getWhen()));
-        authorLabel.setText(commit.getAuthorIdent().getName());
+        lastModifyDateLabel.setText(df.format(lastCommit.getAuthorIdent().getWhen()));
+        authorLabel.setText(lastCommit.getAuthorIdent().getName());
 
-        ObservableList<String> commitsList = FXCollections.observableArrayList(currentElement.getCommitIdList());
-        commitsListView.setItems(commitsList);
+        //ustawienie commitsListView
+        RevCommit commitWithDiff;
+        List<String> commitsDateList = new LinkedList<>();
+        for (String commitId : currentElement.getCommitIdSet()) {
+            commitWithDiff = walk.parseCommit(ObjectId.fromString(commitId));
+            commitsDateList.add(df.format(commitWithDiff.getAuthorIdent().getWhen()));
+        }
+
+        commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }
 
     private void populateTreeView() {
@@ -314,13 +314,13 @@ public class MainWindowController extends COGController {
             GitFacade.findAllReposInDirectory();
         }
     }
-    private void showGitResultDialog(String header,String content)
-    {
+
+    private void showGitResultDialog(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Git Command");
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.show();
     }
-    
+
 }
