@@ -4,7 +4,6 @@ import gitbk.COGClass.COGMethod;
 import gitbk.COGElement.COGElement;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,15 +29,16 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
 
 
 /**
@@ -91,8 +91,7 @@ public class MainWindowController extends COGController {
     private HBox gitButtonsBox;
 
     @FXML
-    void onPullRepository(ActionEvent event)
-    {
+    void onPullRepository(ActionEvent event) {
         try {
             String status = GitFacade.pullRepo(repository);
             loadCurrentRepository(new Git(repository));
@@ -112,17 +111,16 @@ public class MainWindowController extends COGController {
         dialog.setHeaderText("Podaj wiadomosc commitu");
 
         Optional<String> result = dialog.showAndWait();
-         if(result.isPresent()){
-             try{
+        if (result.isPresent()) {
+            try {
                 GitFacade.commitRepo(repository, result.get());
                 showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
                 loadCurrentRepository(new Git(repository));
              }catch(Exception e){
                  showGitResultDialog("GIT COMMIT", e.getMessage());
                  e.printStackTrace();
-
-             }
-         }
+            }
+        }
     }
     
     @FXML 
@@ -133,6 +131,7 @@ public class MainWindowController extends COGController {
         }catch(Exception e){
             e.printStackTrace();
         };
+
     }
 
     @FXML
@@ -164,10 +163,16 @@ public class MainWindowController extends COGController {
             @Override
             public void handle(MouseEvent event) {
                if(actualShowedElement != null){
-                    List<String> commits = actualShowedElement.commitsDiff;
-                    String additionalInfo = commits.get(commitsListView.getSelectionModel().getSelectedIndex());
-                    String result = HighlighterFacade.expandSourceCode(actualShowedElement.getSource(),additionalInfo,10);
-                    new HighlighterFacade().displayHighlightedCode(result, sourceCodeView);
+//                    String cid = (String) commitsListView.getSelectionModel().getSelectedItem();
+                    String cid = actualShowedElement.getLastCommitId();
+                    String additionalInfo = actualShowedElement.getCommitById(cid);
+                    try{
+                        String result = HighlighterFacade.expandSourceCode(actualShowedElement.getSource(),additionalInfo);
+                        new HighlighterFacade().displayHighlightedCode(result, sourceCodeView);
+                    }catch(Exception e)
+                    {
+                        System.out.println(e.getMessage());
+                    }
                }
             }
             
@@ -208,15 +213,20 @@ public class MainWindowController extends COGController {
     void loadCurrentElement(COGElement currentElement) {
         //Ustawianie szczegółów
 
-        actualShowedElement = currentElement;
-        initializeDetailsPane(currentElement);
+        actualShowedElement = currentElement;  
         
-
         //Ustawianie kodu źródłowego
         new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
+
+        try {
+            initializeDetailsPane(currentElement);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+    }
     }
 
-    private void initializeDetailsPane(COGElement currentElement) {
+    private void initializeDetailsPane(COGElement currentElement) throws IOException {
         if (currentElement instanceof COGClass) {
 
             COGClass currentClass = (COGClass) currentElement;
@@ -261,23 +271,25 @@ public class MainWindowController extends COGController {
         //Zakładka rozszerzona
 
         RevWalk walk = new RevWalk(repository);
-        RevCommit commit = null;
-        try {
-            commit = walk.parseCommit(ObjectId.fromString(currentElement.getLastCommit()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RevCommit lastCommit = walk.parseCommit(ObjectId.fromString(currentElement.getLastCommitId()));
 
         Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
         Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
         Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
         //ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
 
-        lastModifyDateLabel.setText(df.format(commit.getAuthorIdent().getWhen()));
-        authorLabel.setText(commit.getAuthorIdent().getName());
+        lastModifyDateLabel.setText(df.format(lastCommit.getAuthorIdent().getWhen()));
+        authorLabel.setText(lastCommit.getAuthorIdent().getName());
 
-        ObservableList<String> commitsList = FXCollections.observableArrayList(currentElement.getCommitIdList());
-        commitsListView.setItems(commitsList);
+        //ustawienie commitsListView
+        RevCommit commitWithDiff;
+        List<String> commitsDateList = new LinkedList<>();
+        for (String commitId : currentElement.getCommitIdSet()) {
+            commitWithDiff = walk.parseCommit(ObjectId.fromString(commitId));
+            commitsDateList.add(df.format(commitWithDiff.getAuthorIdent().getWhen()));
+        }
+
+        commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }
 
     private void populateTreeView() {
@@ -330,8 +342,8 @@ public class MainWindowController extends COGController {
             GitFacade.findAllReposInDirectory();
         }
     }
-    private void showGitResultDialog(String header,String content)
-    {
+
+    private void showGitResultDialog(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Git Command");
         alert.setHeaderText(header);
@@ -363,4 +375,5 @@ public class MainWindowController extends COGController {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 }

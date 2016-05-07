@@ -5,8 +5,10 @@
  */
 package gitbk.COGElement;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Grzesiek
@@ -14,8 +16,7 @@ import java.util.List;
 public abstract class COGElement {
     private int beginLine;
     private int endLine;
-    private List<String> commitIdList = new ArrayList<>();
-    public List<String> commitsDiff = new ArrayList<>();
+    private Map<String, String> commitsDiffs = new LinkedHashMap<>();
 
     public abstract void setName(String name);
 
@@ -31,18 +32,12 @@ public abstract class COGElement {
 
     public abstract void setCreateDate(String createDate);
 
-    public abstract void setChangingCommits(List<String> changingCommits);
-
     public void setBeginLine(int beginLine) {
         this.beginLine = beginLine;
     }
 
     public void setEndLine(int endLine) {
         this.endLine = endLine;
-    }
-
-    public void setCommitIdList(List<String> commitIdList) {
-        this.commitIdList = commitIdList;
     }
 
     public abstract String getName();
@@ -59,7 +54,10 @@ public abstract class COGElement {
 
     public abstract String getCreateDate();
 
-    public abstract List<String> getChangingCommits();
+    public String getCommitById(String commitId)
+    {
+        return commitsDiffs.get(commitId);
+    }
 
     public int getBeginLine() {
         return beginLine;
@@ -69,22 +67,21 @@ public abstract class COGElement {
         return endLine;
     }
 
-    public List<String> getCommitIdList() {
-        return commitIdList;
-    }
-
     public boolean addCommitToList(String commitId, String diff, int start, int end) {
         if (beginLine <= end || endLine >= start) {
-            if (!commitIdList.contains(commitId)) {
-                commitIdList.add(commitId);
-                commitsDiff.add(diff);
+            if (!commitsDiffs.containsKey(commitId)) {
+                commitsDiffs.put(commitId, diff);
                 return true;
             }
         }
         return false;
     }
 
-    public String getLastCommit() {
-        return commitIdList.get(0);
+    public Set<String> getCommitIdSet() {
+        return commitsDiffs.keySet();
+    }
+
+    public String getLastCommitId() {
+        return commitsDiffs.keySet().iterator().next();
     }
 }

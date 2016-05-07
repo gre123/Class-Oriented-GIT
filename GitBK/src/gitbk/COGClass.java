@@ -94,10 +94,6 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
             this.createDate = createDate;
         }
 
-        @Override
-        public void setChangingCommits(List<String> changingCommits) {
-            this.changingCommits = changingCommits;
-        }
 
         @Override
         public boolean isAbstract() {
@@ -124,7 +120,6 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
             return createDate;
         }
 
-        @Override
         public List<String> getChangingCommits() {
             return changingCommits;
         }
@@ -174,11 +169,6 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
     @Override
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
-    }
-
-    @Override
-    public void setChangingCommits(List<String> changingCommits) {
-        this.changingCommits = changingCommits;
     }
     
     
@@ -242,10 +232,6 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
         return createDate;
     }
 
-    @Override
-    public List<String> getChangingCommits() {
-        return changingCommits;
-    }
     
     
 }

@@ -138,23 +138,21 @@ public class GitFacade {
 
     public static void checkAllCommitsDiff() throws IOException, GitAPIException {
         Repository repository = git.getRepository();
-        String head = repository.resolve(Constants.HEAD).getName();
-        String prevCommit = "";
+        String headCommitId = repository.resolve(Constants.HEAD).getName();
+        String prevCommitId = null;
         List<String> changedFiles = new LinkedList<>();
 
-        for (String commit : commitList) {
-            if (!commit.equals(head)) {
-                //System.out.println("\nNew:" + head + "   Old:" + commit);
-                if (!prevCommit.equals("")) {
-                    changedFiles = checkInnerCommitsDiff(prevCommit, commit);
-                }
-                checkHeadCommitDiff(head, commit, changedFiles);
-                prevCommit = commit;
+        for (String currentCommitId : commitList) {
+            if (!currentCommitId.equals(headCommitId)) {
+                //System.out.println("\nNew:" + headCommitId + "   Old:" + currentCommitId);
+                changedFiles = checkInnerCommitsDiff(prevCommitId, currentCommitId);
+                checkHeadCommitDiff(headCommitId, currentCommitId, changedFiles, prevCommitId);
             }
+            prevCommitId = currentCommitId;
         }
     }
 
-    private static void checkHeadCommitDiff(String newCommitId, String oldCommitId, List<String> changedFiles) throws GitAPIException, IOException {
+    private static void checkHeadCommitDiff(String newCommitId, String oldCommitId, List<String> changedFiles, String prevCommitId) throws GitAPIException, IOException {
         Repository repository = git.getRepository();
 
         List<DiffEntry> diff = checkCommitDiff(newCommitId, oldCommitId, repository);
@@ -181,9 +179,9 @@ public class GitFacade {
                     int start = Integer.valueOf(matcher.group(3));
                     int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
                     for (COGClass cogClass : classList) {
-                        if (cogClass.addCommitToList(oldCommitId, outputStream.toString(), start, end)) {
+                        if (cogClass.addCommitToList(prevCommitId, outputStream.toString(), start, end)) {
                             for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
-                                cogMethod.addCommitToList(oldCommitId, outputStream.toString(), start, end);
+                                cogMethod.addCommitToList(prevCommitId, outputStream.toString(), start, end);
                             }
                         }
                     }
