@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectStream;
 
@@ -125,5 +127,23 @@ public class Source2ClassConverter {
             interfaces.add(i.getName());
         }
         return interfaces;
+    }
+    
+    static List<CommitChange> convertCommitToSingleCommitChange(String commitSource)
+    {
+        int i=1;
+        ArrayList<CommitChange> commitChangeList = new ArrayList<>();
+        Pattern pattern = Pattern.compile("@@ -(\\d+),(\\d+) \\+(\\d+),(\\d+) @@");
+        Matcher matcher = pattern.matcher(commitSource);
+        
+        String[] commitChanges = commitSource.split("(@@ -(\\d+),(\\d+) \\+(\\d+),(\\d+) @@)");
+        while (matcher.find()) {
+            int start = Integer.valueOf(matcher.group(3));
+            int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
+            
+            commitChangeList.add(new CommitChange(start,end,commitChanges[i]));
+            i++;
+        }
+        return commitChangeList;
     }
 }
