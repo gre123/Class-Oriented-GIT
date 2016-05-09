@@ -47,7 +47,7 @@ import javafx.event.ActionEvent;
 public class MainWindowController extends COGController {
 
     public Map<String, COGClass> classes;
-    private Repository repository;
+    public Repository repository;
     private RevWalk revWalk;
     private COGElement actualShowedElement;
     
@@ -152,9 +152,21 @@ public class MainWindowController extends COGController {
     }
     
     @FXML
-    void onReadmeClicked()
+    void onReadmeClicked() 
     {
-        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ReadmeWindow.fxml"));
+            Parent root = (Parent) loader.load();
+            loader.<COGController>getController().setParentController(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOpacity(1);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception ex) {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+          }
     }
 
     @Override

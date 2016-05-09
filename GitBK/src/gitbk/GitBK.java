@@ -20,8 +20,8 @@ public class GitBK extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        GitFacade.selectedDirectory = new File("C:/Users/Grzesiek/Moje rzeczy/rewizje/repos");
-        GitFacade.findAllReposInDirectory();
+//        GitFacade.selectedDirectory = new File("C:/Users/Grzesiek/Moje rzeczy/rewizje/repos");
+//        GitFacade.findAllReposInDirectory();
 
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
 

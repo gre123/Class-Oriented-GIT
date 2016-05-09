@@ -5,6 +5,7 @@
  */
 package gitbk;
 
+import java.io.BufferedReader;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -22,11 +23,13 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 /**
  * @author Grzesiek
@@ -122,6 +125,34 @@ public class GitFacade {
             classesInFileMap.put(treeWalk.getPathString(), new LinkedList<>(classes.values()));
         }
         return allClasses;
+    }
+    
+    public static String getReadmeFromCommit(Repository repository, ObjectId commitID) throws Exception {
+        RevWalk revWalk = new RevWalk(repository);
+        RevCommit commit = revWalk.parseCommit(commitID);
+        RevTree tree = commit.getTree();
+
+        TreeWalk treeWalk = new TreeWalk(repository);
+        treeWalk.addTree(tree);
+        treeWalk.setRecursive(true);
+        treeWalk.setFilter(PathFilter.create("README.md"));
+        
+        if(treeWalk.next())
+        {
+            ObjectId id = treeWalk.getObjectId(0);
+            ObjectLoader loader = repository.open(id);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(loader.openStream()));
+            StringBuilder builder = new StringBuilder();
+            String line = reader.readLine();
+            while(line!=null)
+            {
+                builder.append(line+"\n");
+                line = reader.readLine();
+            }
+            return builder.toString();
+        }
+        return "Could not find readme file!";
+        
     }
 
     ///////////////////////////////

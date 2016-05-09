@@ -55,7 +55,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Hyperlink fx:id="readmeLink" layoutX="16.0" layoutY="124.0" prefHeight="23.0" prefWidth="192.0" text="README" visible="false" />
+                  <Hyperlink fx:id="readmeLink" layoutX="16.0" layoutY="124.0" onAction="#onReadmeClicked" prefHeight="23.0" prefWidth="192.0" text="README" visible="false" />
           </children>
         </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
