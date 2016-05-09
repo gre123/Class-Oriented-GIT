@@ -167,7 +167,7 @@ public class MainWindowController extends COGController {
                     String cid = actualShowedElement.getLastCommitId();
                     String additionalInfo = actualShowedElement.getCommitById(cid);
                     try{
-                        String result = HighlighterFacade.expandSourceCode(actualShowedElement.getSource(),additionalInfo);
+                        String result = HighlighterFacade.expandSourceCode(actualShowedElement,actualShowedElement.getSource(),additionalInfo);
                         new HighlighterFacade().displayHighlightedCode(result, sourceCodeView);
                     }catch(Exception e)
                     {
@@ -206,8 +206,6 @@ public class MainWindowController extends COGController {
         populateTreeView();
 
         GitFacade.checkAllCommitsDiff();
-
-        gitButtonsBox.setVisible(true);
     }
 
     void loadCurrentElement(COGElement currentElement) {

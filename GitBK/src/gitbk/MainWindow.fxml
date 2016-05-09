@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -10,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="717.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
+<VBox prefHeight="1268.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -23,9 +22,9 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.250501002004008, 0.7715430861723447" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane prefHeight="716.0" prefWidth="247.0">
+        <AnchorPane>
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Repozytorium" textAlignment="CENTER" wrapText="false">
               <font>
@@ -53,13 +52,6 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <HBox fx:id="gitButtonsBox" layoutX="14.0" layoutY="122.0" prefHeight="27.0" prefWidth="225.0" visible="false" AnchorPane.bottomAnchor="602.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="122.0">
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#onPullRepository" prefHeight="25.0" prefWidth="65.0" text="PULL" />
-                        <Button mnemonicParsing="false" onAction="#onCommitRepository" prefHeight="25.0" prefWidth="85.0" text="COMMIT" />
-                        <Button mnemonicParsing="false" onAction="#onPushRepository" prefHeight="25.0" prefWidth="76.0" text="PUSH" />
-                     </children>
-                  </HBox>
           </children>
         </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -68,7 +60,7 @@
           <Label alignment="CENTER" font="$x1" layoutX="65.0" prefHeight="27.0" prefWidth="127.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
-        <AnchorPane>
+         <AnchorPane>
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Szczegóły" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
