@@ -5,14 +5,10 @@
  */
 package gitbk;
 
-import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
 import gitbk.COGElement.COGElement;
-import static gitbk.GitFacade.classesInFileMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javafx.scene.web.WebView;
 
 
@@ -21,14 +17,15 @@ public class HighlighterFacade {
 "\n" +
 "<head>\n" +
 "<title>Składnia</title>\n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script>\n" +
+"<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script> \n" +
 "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushDiff.js")+"\"></script>\n" +
 "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushJava.js")+"\"></script>\n" +
-            "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js\"></script>\n"+
-"<script src=\"http://code.jquery.com/ui/1.10.4/jquery-ui.js\"></script>\n"+
-"<link href=\"http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css\" rel=\"stylesheet\">\n"+
+"<script src=\""+getClass().getResource("syntaxhighlighter/jquery-1.12.3.min.js")+"\"></script>\n" +
+"<script src=\""+getClass().getResource("syntaxhighlighter/jquery-ui.min.js")+"\"></script>\n" +
 "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shCore.css")+"\">\n" +
+"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/jquery-ui.css")+"\">\n" +
 "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shThemeDefault.css")+"\">\n" +
+"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/style.css")+"\">\n" +
 "\n" +
 "</head>\n" +
 "<body>\n" +

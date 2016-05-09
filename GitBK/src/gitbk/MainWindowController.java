@@ -33,7 +33,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import java.util.*;
 import java.util.logging.Level;
@@ -47,11 +46,11 @@ import javafx.event.ActionEvent;
 
 public class MainWindowController extends COGController {
 
-    private Map<String, COGClass> classes;
+    public Map<String, COGClass> classes;
     private Repository repository;
     private RevWalk revWalk;
     private COGElement actualShowedElement;
-
+    
     private DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @FXML
@@ -88,8 +87,11 @@ public class MainWindowController extends COGController {
     private ListView interfacesListView;
 
     @FXML
-    private HBox gitButtonsBox;
+    private Hyperlink readmeLink;
 
+    @FXML
+    private TextField searchField;
+            
     @FXML
     void onPullRepository(ActionEvent event) {
         try {
@@ -135,11 +137,6 @@ public class MainWindowController extends COGController {
     }
 
     @FXML
-    void onSearchClass(ActionEvent event) {
-
-    }
-
-    @FXML
     void onSelectRepository(ActionEvent event) {
         //Wymusza pokazywanie okna wyboru folderu dopóki nie zostanie on wybrany.
         while (GitFacade.selectedDirectory == null) {
@@ -152,6 +149,12 @@ public class MainWindowController extends COGController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    @FXML
+    void onReadmeClicked()
+    {
+        
     }
 
     @Override
@@ -178,6 +181,15 @@ public class MainWindowController extends COGController {
             
             
         });
+        searchField.textProperty().addListener(new ChangeListener<String>(){
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                populateTreeView(newValue);
+//                TreeFilterUtil.filterTreeView(MainWindowController.this, newValue);
+            }
+            
+        });
     }
 
     private void createChooseRepoWindow() throws IOException {
@@ -197,17 +209,55 @@ public class MainWindowController extends COGController {
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];
         selectedRepositoryLabel.setText(name);
+        readmeLink.setText("README - "+name);
+        readmeLink.setVisible(true);
+        
         GitFacade.git = new Git(repository);
         GitFacade.findAllCommits();
         rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
 
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
         leftStatusLabel.setText("Ilość klas: " + classes.size());
-        populateTreeView();
+        populateTreeView("");
 
         GitFacade.checkAllCommitsDiff();
     }
 
+    private void populateTreeView(String filter) {
+        if (classes != null) {
+            TreeItem allClasses = new TreeItem("Klasy");
+            classTreeView.setRoot(allClasses);
+
+            for (COGClass cl : classes.values()) {
+                if(!filter.isEmpty() && !cl.getName().toString().contains(filter)) continue;
+                TreeItem item = new TreeItem(cl.getName());
+                for (COGClass.COGMethod method : cl.getMethods().values()) {
+                    TreeItem methodItem = new TreeItem(method.getName());
+                    item.getChildren().add(methodItem);
+                }
+
+                allClasses.getChildren().add(item);
+            }
+
+            classTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem>() {
+
+                @Override
+                public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
+                    if (newValue.getParent().equals(classTreeView.getRoot())) {
+                        loadCurrentElement(classes.get((String) newValue.getValue()));
+                    } else {
+                        COGClass currentClass = classes.get((String) newValue.getParent().getValue());
+                        COGMethod currentMethod = currentClass.getMethods().get((String) newValue.getValue());
+                        loadCurrentElement(currentMethod);
+                    }
+                }
+
+
+            });
+            classTreeView.setShowRoot(false);
+        }
+    }
+    
     void loadCurrentElement(COGElement currentElement) {
         //Ustawianie szczegółów
 
@@ -290,42 +340,7 @@ public class MainWindowController extends COGController {
         commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }
 
-    private void populateTreeView() {
-        if (classes != null) {
-//            Collections.sort(classes);
-
-            TreeItem allClasses = new TreeItem("Klasy");
-            classTreeView.setRoot(allClasses);
-
-            for (COGClass cl : classes.values()) {
-                TreeItem item = new TreeItem(cl.getName());
-
-                for (COGClass.COGMethod method : cl.getMethods().values()) {
-                    TreeItem methodItem = new TreeItem(method.getName());
-                    item.getChildren().add(methodItem);
-                }
-
-                allClasses.getChildren().add(item);
-            }
-
-            classTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem>() {
-
-                @Override
-                public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
-                    if (newValue.getParent().equals(classTreeView.getRoot())) {
-                        loadCurrentElement(classes.get((String) newValue.getValue()));
-                    } else {
-                        COGClass currentClass = classes.get((String) newValue.getParent().getValue());
-                        COGMethod currentMethod = currentClass.getMethods().get((String) newValue.getValue());
-                        loadCurrentElement(currentMethod);
-                    }
-                }
-
-
-            });
-            classTreeView.setShowRoot(false);
-        }
-    }
+   
 
     public void showChooseInitialDirectoryDialog(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
