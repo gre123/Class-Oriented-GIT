@@ -29,7 +29,7 @@ public class HighlighterFacade {
 "\n" +
 "</head>\n" +
 "<body>\n" +
-            "<div id=\"progressbar\"></div>\n"+
+            "<div id=\"progressbar\"><div class=\"progress-label\">Loading...</div></div>\n"+
             "<script> $( \"#progressbar\" ).progressbar({\n  value: false\n" +
             "    });</script>\n"+
 "<script type=\"syntaxhighlighter\" class = \"brush: java;  gutter:false\"><![CDATA[\n" +

@@ -11,7 +11,7 @@
 
 <VBox prefHeight="1268.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
+    <MenuBar style="-fx-background-color: lightblue;" VBox.vgrow="NEVER">
       <menus>
         <Menu fx:id="repoMenu" disable="true" mnemonicParsing="false" text="Repozytorium">
                <items>
