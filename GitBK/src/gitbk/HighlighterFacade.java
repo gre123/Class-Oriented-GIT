@@ -29,6 +29,9 @@ public class HighlighterFacade {
 "\n" +
 "</head>\n" +
 "<body>\n" +
+            "<div id=\"progressbar\"></div>\n"+
+            "<script> $( \"#progressbar\" ).progressbar({\n  value: false\n" +
+            "    });</script>\n"+
 "<script type=\"syntaxhighlighter\" class = \"brush: java;  gutter:false\"><![CDATA[\n" +
 "\n";
     
@@ -37,6 +40,7 @@ public class HighlighterFacade {
 "<script type=\"text/javascript\">\n"
             + "$(\"div\").tooltip()\n"+
 "     SyntaxHighlighter.all()\n" +
+"     $( \"#progressbar\" ).hide()\n  "+
 "</script>\n" +
 "\n" +
 "</body>\n" +
