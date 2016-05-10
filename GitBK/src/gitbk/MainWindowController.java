@@ -48,6 +48,7 @@ public class MainWindowController extends COGController {
 
     public Map<String, COGClass> classes;
     public Repository repository;
+    public String repositoryName="";
     private RevWalk revWalk;
     private COGElement actualShowedElement;
     
@@ -91,6 +92,9 @@ public class MainWindowController extends COGController {
 
     @FXML
     private TextField searchField;
+    
+    @FXML
+    private Menu repoMenu;
             
     @FXML
     void onPullRepository(ActionEvent event) {
@@ -151,6 +155,18 @@ public class MainWindowController extends COGController {
         }
     }
     
+    @FXML
+    void onAboutClicked()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("O programie");
+        alert.setHeaderText("Class-Oriented Git");
+        alert.setContentText("Program utworzony w ramach projektu z przedmiotu Konfiguracje i Rewizje Oprogramowania. Jest to podgląd repozytoriów, zorientowany na klasy. "
+                + "\nAutorzy:\n     inż. Piotr Knop\n     inż. Grzegorz Bylina\n"
+                + "\nMenu Repozytorium zostanie udostepnione po wybraniu repozytorium poprzez przycisk.\n"
+                + "Prośba o pozytywną ocenę z przedmiotu...");
+        alert.show();
+    }
     @FXML
     void onReadmeClicked() 
     {
@@ -219,20 +235,33 @@ public class MainWindowController extends COGController {
     public void loadCurrentRepository(Git selectedRepo) throws Exception {
         repository = selectedRepo.getRepository();
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
-        String name = directoryPieces[directoryPieces.length - 2];
-        selectedRepositoryLabel.setText(name);
-        readmeLink.setText("README - "+name);
-        readmeLink.setVisible(true);
+        repositoryName = directoryPieces[directoryPieces.length - 2];
+        
+//        selectedRepositoryLabel.setText(name);
+//        readmeLink.setText("README - "+name);
+//        readmeLink.setVisible(true);
         
         GitFacade.git = new Git(repository);
         GitFacade.findAllCommits();
-        rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
+//        rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
 
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
-        leftStatusLabel.setText("Ilość klas: " + classes.size());
-        populateTreeView("");
+//        leftStatusLabel.setText("Ilość klas: " + classes.size());
+//        populateTreeView("");
 
         GitFacade.checkAllCommitsDiff();
+//        repoMenu.setDisable(false);
+    }
+    
+    public void loadCurrentRepositoryInGUI()
+    {
+        selectedRepositoryLabel.setText(repositoryName);
+        readmeLink.setText("README - "+repositoryName);
+        readmeLink.setVisible(true);
+        rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
+        leftStatusLabel.setText("Ilość klas: " + classes.size());
+        populateTreeView("");
+        repoMenu.setDisable(false);
     }
 
     private void populateTreeView(String filter) {

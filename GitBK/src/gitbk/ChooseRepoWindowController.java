@@ -25,8 +25,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 
 /**
  * FXML Controller class
@@ -60,14 +69,36 @@ public class ChooseRepoWindowController extends COGController {
 
     @FXML
     private void onSelectRepoClicked() throws Exception {
+        Future<String> myTask;
+        Stage stage = (Stage) reposListView.getScene().getWindow();
         MainWindowController controller = (MainWindowController) parentController;
-        if (!reposListView.getSelectionModel().isEmpty()) {
-            String s = (String) reposListView.getSelectionModel().getSelectedItem();
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        
+        if (!reposListView.getSelectionModel().isEmpty()) {            
+            Task task = new Task(){
+                @Override
+                protected Object call() throws Exception {
+                    String s = (String) reposListView.getSelectionModel().getSelectedItem();
+                    Git repo = GitFacade.repos.get(s);
+                    MainWindowController controller = (MainWindowController) parentController;
+                    controller.loadCurrentRepository(repo);
+                    return null;
+                }
+                
+            };
+            task.setOnSucceeded(new EventHandler() {
 
-            Git repo = GitFacade.repos.get(s);
-            controller.loadCurrentRepository(repo);
-            Stage stage = (Stage) reposListView.getScene().getWindow();
-            stage.close();
+                @Override
+                public void handle(Event event) {
+                   MainWindowController controller = (MainWindowController) parentController;
+                   Stage stage = (Stage) reposListView.getScene().getWindow();
+                   reposListView.getScene().setCursor(Cursor.DEFAULT);
+                   controller.loadCurrentRepositoryInGUI();
+                   stage.close();
+                }
+            });
+            reposListView.getScene().setCursor(Cursor.WAIT);
+            service.execute(task);
         }
     }
 
