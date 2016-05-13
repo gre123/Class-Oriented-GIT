@@ -1,3 +1,9 @@
 body {
-    overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+#progressbar {
+	margin: auto;
+	width: 60%;
+	
 }
