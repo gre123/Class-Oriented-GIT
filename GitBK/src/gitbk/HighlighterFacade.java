@@ -37,10 +37,14 @@ public class HighlighterFacade {
     
     public static String htmlPostfix="]]></script>\n"+
 "\n" +
+"<hr/><div class=\"commitchange\"></div>"+
 "<script type=\"text/javascript\">\n"
             + "$(\"div\").tooltip()\n"+
 "     SyntaxHighlighter.all()\n" +
-"     $( \"#progressbar\" ).hide()\n  "+
+"     $( \"#progressbar\" ).hide()\n"
+ + "$(\"hr\").click(function(){\n" +
+   "$(\".commitchange\").slideDown();\n" +
+"});  "+
 "</script>\n" +
 "\n" +
 "</body>\n" +
@@ -54,8 +58,8 @@ public class HighlighterFacade {
     public static String expandSourceCode(COGElement actualElement, String sourceCode, String commit) throws Exception
     {
         
-        String prefix = "]]></script>\n<script type=\"syntaxhighlighter\" class = \"brush: diff;  gutter:false\"><![CDATA[\n";
-        String postfix = "]]></script>\n<script type=\"syntaxhighlighter\" class = \"brush: java; gutter:false\"><![CDATA[\n\n";
+        String prefix = "]]></script>\n<hr/><div class=\"commitchange\"><script type=\"syntaxhighlighter\" class = \"brush: diff;  gutter:false\"><![CDATA[\n";
+        String postfix = "]]></script></div>\n<script type=\"syntaxhighlighter\" class = \"brush: java; gutter:false\"><![CDATA[\n\n";
    
         List<String> sourceLines = Arrays.asList(sourceCode.split("\n"));
         List<String> resultList = sourceLines;

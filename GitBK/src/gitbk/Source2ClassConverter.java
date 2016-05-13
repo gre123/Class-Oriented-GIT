@@ -42,7 +42,7 @@ public class Source2ClassConverter {
             cu = JavaParser.parse(inputStream);
             for(TypeDeclaration type:cu.getTypes())
             {
-                generateCOGClasses(type);
+                if(type instanceof ClassOrInterfaceDeclaration) generateCOGClasses(type);
             }
         }catch(ParseException e)
         {
@@ -56,27 +56,21 @@ public class Source2ClassConverter {
     {
         Map<String,COGClass.COGMethod> currentClassMethods = new TreeMap<>();
         COGClass currentClass = COGClassFactory.newInstance();
-       
-        if(type instanceof ClassOrInterfaceDeclaration)
-        {
-            ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) type;
-            if(!classDeclaration.getExtends().isEmpty())currentClass.setSuperClass(classDeclaration.getExtends().get(0).toString());
-            currentClass.setImplementedInterfaces(convertImplementedInterfaces(classDeclaration));
-        }
+        ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) type;
         
+        if(!classDeclaration.getExtends().isEmpty())currentClass.setSuperClass(classDeclaration.getExtends().get(0).toString());
+        currentClass.setImplementedInterfaces(convertImplementedInterfaces(classDeclaration));
         currentClass.setName(type.getName()); 
         currentClass.setSource((String) type.toStringWithoutComments());
         currentClass.setAccess(ModifierSet.getAccessSpecifier(type.getModifiers()).toString());
- 
-        currentClass.setIsAbstract(ModifierSet.isAbstract(type.getModifiers()));
-        
+        currentClass.setIsAbstract(ModifierSet.isAbstract(type.getModifiers()));       
         currentClass.setBeginLine(type.getBeginLine());
         currentClass.setEndLine(type.getEndLine());  
         
         List<BodyDeclaration> declarations = type.getMembers();
         for(BodyDeclaration declaration:declarations)
         {
-            if(declaration instanceof TypeDeclaration)
+            if(declaration instanceof ClassOrInterfaceDeclaration)
             {
                 generateCOGClasses((TypeDeclaration) declaration);
             }

@@ -69,9 +69,6 @@ public class ChooseRepoWindowController extends COGController {
 
     @FXML
     private void onSelectRepoClicked() throws Exception {
-        Future<String> myTask;
-        Stage stage = (Stage) reposListView.getScene().getWindow();
-        MainWindowController controller = (MainWindowController) parentController;
         ExecutorService service = Executors.newSingleThreadExecutor();
         
         if (!reposListView.getSelectionModel().isEmpty()) {            

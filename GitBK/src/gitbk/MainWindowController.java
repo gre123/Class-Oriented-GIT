@@ -28,12 +28,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +49,8 @@ public class MainWindowController extends COGController {
     public String repositoryName="";
     private RevWalk revWalk;
     private COGElement actualShowedElement;
+    
+    private GitCommandsController gitCommand = new GitCommandsController(this);
     
     private DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -98,46 +98,22 @@ public class MainWindowController extends COGController {
             
     @FXML
     void onPullRepository(ActionEvent event) {
-        try {
-            String status = GitFacade.pullRepo(repository);
-            loadCurrentRepository(new Git(repository));
-            showGitResultDialog("GIT PULL:", status);
-
-        } catch (Exception ex) {
-            showGitResultDialog("GIT PULL:", ex.getMessage());
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        gitCommand.pullCommand();
     }
 
     @FXML
     void onCommitRepository(ActionEvent event) {
-
-        TextInputDialog dialog = new TextInputDialog("Commit przy pomocy COG");
-        dialog.setTitle("Wiadomosc commitu");
-        dialog.setHeaderText("Podaj wiadomosc commitu");
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                GitFacade.commitRepo(repository, result.get());
-                showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
-                loadCurrentRepository(new Git(repository));
-             }catch(Exception e){
-                 showGitResultDialog("GIT COMMIT", e.getMessage());
-                 e.printStackTrace();
-            }
-        }
+        gitCommand.commitCommand();
     }
     
     @FXML 
     void onPushRepository(ActionEvent event)
     {
-        try {
+         try {
             showLoginWindow();
         }catch(Exception e){
             e.printStackTrace();
         };
-
     }
 
     @FXML
@@ -236,21 +212,10 @@ public class MainWindowController extends COGController {
         repository = selectedRepo.getRepository();
         String[] directoryPieces = repository.getDirectory().toString().split("\\\\");
         repositoryName = directoryPieces[directoryPieces.length - 2];
-        
-//        selectedRepositoryLabel.setText(name);
-//        readmeLink.setText("README - "+name);
-//        readmeLink.setVisible(true);
-        
         GitFacade.git = new Git(repository);
         GitFacade.findAllCommits();
-//        rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
-
         classes = GitFacade.getCOGClassesFromCommit(repository, repository.resolve(Constants.HEAD));
-//        leftStatusLabel.setText("Ilość klas: " + classes.size());
-//        populateTreeView("");
-
         GitFacade.checkAllCommitsDiff();
-//        repoMenu.setDisable(false);
     }
     
     public void loadCurrentRepositoryInGUI()
@@ -397,7 +362,7 @@ public class MainWindowController extends COGController {
         }
     }
 
-    private void showGitResultDialog(String header, String content) {
+    public void showGitResultDialog(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Git Command");
         alert.setHeaderText(header);
@@ -405,7 +370,7 @@ public class MainWindowController extends COGController {
         alert.show();
     }
     
-    private void showLoginWindow() throws Exception
+    public void showLoginWindow() throws Exception
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
         Parent root = (Parent) loader.load();
@@ -420,14 +385,12 @@ public class MainWindowController extends COGController {
     
     public void onPushLoginClicked(String username, String password)
     {
-        try{
-        
-        String result = GitFacade.pushRepo(repository, username, password);
-        showGitResultDialog("GIT PUSH:", result);
-        } catch (GitAPIException ex) {
-            showGitResultDialog("GIT PUSH:", ex.getMessage());
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        gitCommand.pushCommand(username, password);
+    }
+    
+    public Scene getScene()
+    {
+        return leftStatusLabel.getScene();
     }
 
 }

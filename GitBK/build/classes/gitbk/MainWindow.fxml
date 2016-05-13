@@ -11,7 +11,7 @@
 
 <VBox prefHeight="1268.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
   <children>
-    <MenuBar style="-fx-background-color: lightblue;" VBox.vgrow="NEVER">
+    <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu fx:id="repoMenu" disable="true" mnemonicParsing="false" text="Repozytorium">
                <items>
@@ -38,7 +38,7 @@
                 <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <Label alignment="CENTER" layoutX="14.0" layoutY="177.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Wyszukiwarka" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" layoutX="15.0" layoutY="204.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Wyszukiwarka" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x11" />
                      </font>
@@ -46,7 +46,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <TextField fx:id="searchField" layoutX="11.0" layoutY="216.0" prefHeight="25.0" prefWidth="200.0" promptText="Wpisz nazwę klasy..." />
+                  <TextField fx:id="searchField" layoutX="12.0" layoutY="243.0" prefHeight="25.0" prefWidth="200.0" promptText="Wpisz nazwę klasy..." />
                   <Button layoutX="14.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSelectRepository" text="Wybierz..." />
                   <Label fx:id="selectedRepositoryLabel" layoutX="19.0" layoutY="53.0" text="Nie wybrano" />
                   <TreeView fx:id="classTreeView" layoutX="11.0" layoutY="326.0" prefHeight="216.0" prefWidth="200.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="326.0" />
