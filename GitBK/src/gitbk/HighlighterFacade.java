@@ -12,43 +12,78 @@ import java.util.List;
 import javafx.scene.web.WebView;
 
 
+
 public class HighlighterFacade {
-    public String htmlPrefix= "<html>\n" +
-"\n" +
-"<head>\n" +
-"<title>Składnia</title>\n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script> \n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/shBrushDiff.js")+"\"></script>\n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/shBrushJava.js")+"\"></script>\n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/jquery-1.12.3.min.js")+"\"></script>\n" +
-"<script src=\""+getClass().getResource("syntaxhighlighter/jquery-ui.min.js")+"\"></script>\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shCore.css")+"\">\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/jquery-ui.css")+"\">\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shThemeDefault.css")+"\">\n" +
-"<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/style.css")+"\">\n" +
-"\n" +
-"</head>\n" +
-"<body>\n" +
-            "<div id=\"progressbar\"><div class=\"progress-label\">Loading...</div></div>\n"+
-            "<script> $( \"#progressbar\" ).progressbar({\n  value: false\n" +
-            "    });</script>\n"+
-"<script type=\"syntaxhighlighter\" class = \"brush: java;  gutter:false\"><![CDATA[\n" +
-"\n";
+    public enum CodeType{
+        JAVA, DIFF
+    }
     
-    public static String htmlPostfix="]]></script>\n"+
-"\n" +
-"<hr/><div class=\"commitchange\"></div>"+
-"<script type=\"text/javascript\">\n"
-            + "$(\"div\").tooltip()\n"+
-"     SyntaxHighlighter.all()\n" +
-"     $( \"#progressbar\" ).hide()\n"
- + "$(\"hr\").click(function(){\n" +
-   "$(\".commitchange\").slideDown();\n" +
-"});  "+
-"</script>\n" +
-"\n" +
-"</body>\n" +
-"</html>";
+    public String htmlPrefix;
+    public String htmlPostfix;
+
+    public HighlighterFacade(CodeType code) {
+        switch(code)
+        {
+            case JAVA:
+            {
+                htmlPrefix = "<html>\n" +
+                "<head>\n" +
+                "<title>Składnia</title>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script> \n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushDiff.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushJava.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/jquery-1.12.3.min.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/jquery-ui.min.js")+"\"></script>\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shCore.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/jquery-ui.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shThemeDefault.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/style.css")+"\">\n" +
+                "\n" +
+                "</head>\n" +
+                "<body>\n" +
+                    "<div id=\"progressbar\"><div class=\"progress-label\">Loading...</div></div>\n"+
+                    "<script> $( \"#progressbar\" ).progressbar({\n  value: false\n" +
+                    "    });</script>\n"+
+                    "<script type=\"syntaxhighlighter\" class = \"brush: java;\"><![CDATA[\n" +
+                    "\n";
+                break;
+            }
+            case DIFF:
+            {
+                htmlPrefix = "<html>\n" +
+                "<head>\n" +
+                "<title>Składnia</title>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shCore.js")+"\"></script> \n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushDiff.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/shBrushJava.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/jquery-1.12.3.min.js")+"\"></script>\n" +
+                "<script src=\""+getClass().getResource("syntaxhighlighter/jquery-ui.min.js")+"\"></script>\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shCore.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/jquery-ui.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/shThemeDefault.css")+"\">\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\""+getClass().getResource("syntaxhighlighter/style.css")+"\">\n" +
+                "\n" +
+                "</head>\n" +
+                "<body>\n" +
+                    "<div id=\"progressbar\"><div class=\"progress-label\">Loading...</div></div>\n"+
+                    "<script> $( \"#progressbar\" ).progressbar({\n  value: false\n" +
+                    "    });</script>\n"+
+                    "<script type=\"syntaxhighlighter\" class = \"brush: diff;\"><![CDATA[\n" +
+                    "\n";
+                break;
+            }
+        }
+        htmlPostfix="]]></script>\n"+
+                "\n" +
+                "<script type=\"text/javascript\">\n"+
+                    "SyntaxHighlighter.all()\n" +
+                    "$( \"#progressbar\" ).hide()\n"+
+                    "</script>\n" +
+                    "\n" +
+                "</body>\n" +
+                "</html>";
+    }
+    
     
     public void displayHighlightedCode(String code, WebView webview)
     {
@@ -72,8 +107,8 @@ public class HighlighterFacade {
            int beginIndex = change.begin-actualElement.getBeginLine();
            if(beginIndex < 0) continue;
            List<String> tempList = new ArrayList<String>(resultList.subList(0, beginIndex));
-           tempList.add(prefix+change.changeCode+postfix);
-           tempList.addAll(sourceLines.subList(change.end,sourceLines.size()-actualElement.getBeginLine()));
+           tempList.add(change.changeCode);
+           tempList.addAll(sourceLines.subList(change.end,sourceLines.size()));
            
            resultList = tempList;
         }

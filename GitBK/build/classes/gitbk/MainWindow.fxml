@@ -26,7 +26,7 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2505567928730512, 0.7182628062360802" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <AnchorPane>
           <children>
@@ -46,7 +46,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <TextField fx:id="searchField" layoutX="12.0" layoutY="243.0" prefHeight="25.0" prefWidth="200.0" promptText="Wpisz nazwę klasy..." />
+                  <TextField fx:id="searchField" layoutX="12.0" layoutY="243.0" prefHeight="25.0" prefWidth="200.0" promptText="Wpisz nazwę klasy..." AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="10.0" />
                   <Button layoutX="14.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSelectRepository" text="Wybierz..." />
                   <Label fx:id="selectedRepositoryLabel" layoutX="19.0" layoutY="53.0" text="Nie wybrano" />
                   <TreeView fx:id="classTreeView" layoutX="11.0" layoutY="326.0" prefHeight="216.0" prefWidth="200.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="326.0" />
@@ -60,11 +60,20 @@
         </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <WebView fx:id="sourceCodeView" fontScale="0.8" layoutY="53.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="1257.0" prefWidth="393.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0" />
+                  <WebView fx:id="sourceCodeView" fontScale="0.8" layoutX="5.0" layoutY="70.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="1247.0" prefWidth="433.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="70.0" />
           <Label alignment="CENTER" font="$x1" layoutX="65.0" prefHeight="27.0" prefWidth="127.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <Accordion fx:id="commitAccordion" focusTraversable="false" layoutX="5.0" layoutY="44.0" prefHeight="578.0" prefWidth="433.0" visible="false" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="44.0">
+                    <panes>
+                      <TitledPane fx:id="commitPane" animated="false" focusTraversable="false" prefHeight="397.0" prefWidth="443.0" text="untitled 1">
+                           <content>
+                              <WebView fx:id="commitWebView" fontScale="0.8" prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                        </TitledPane>
+                    </panes>
+                  </Accordion>
                </children>
             </AnchorPane>
-         <AnchorPane>
+         <AnchorPane maxWidth="250.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Szczegóły" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
@@ -116,7 +125,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <ListView fx:id="interfacesListView" layoutX="11.0" layoutY="113.0" prefHeight="64.0" prefWidth="207.0" />
+                                          <ListView fx:id="interfacesListView" layoutX="6.0" layoutY="113.0" prefHeight="64.0" prefWidth="233.0" />
                                           <Label layoutX="31.0" layoutY="225.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Zasięg">
                                              <font>
                                                 <Font size="14.0" />

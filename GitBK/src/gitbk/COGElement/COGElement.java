@@ -5,6 +5,7 @@
  */
 package gitbk.COGElement;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,15 @@ public abstract class COGElement {
         return commitsDiffs.get(commitId);
     }
 
+    public String getCommitByIndex(int index)
+    {
+        Iterator<String> it = commitsDiffs.keySet().iterator();
+        for(int i=0;i<index;i++)
+        {
+            it.next();
+        }
+        return commitsDiffs.get(it.next());
+    }
     public int getBeginLine() {
         return beginLine;
     }

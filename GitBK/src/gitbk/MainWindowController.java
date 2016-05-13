@@ -2,6 +2,7 @@ package gitbk;
 
 import gitbk.COGClass.COGMethod;
 import gitbk.COGElement.COGElement;
+import gitbk.HighlighterFacade.CodeType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -65,6 +66,9 @@ public class MainWindowController extends COGController {
 
     @FXML
     WebView sourceCodeView;
+    
+    @FXML
+    WebView commitWebView;
 
     @FXML
     Pane classDetailsPane;
@@ -74,12 +78,18 @@ public class MainWindowController extends COGController {
 
     @FXML
     Pane commitDetailsPane;
+    
+    @FXML
+    TitledPane commitPane;
 
     @FXML
     ListView<String> commitsListView;
 
     @FXML
     private Label leftStatusLabel;
+    
+    @FXML
+    Accordion commitAccordion;
 
     @FXML
     private Label rightStatusLabel;
@@ -170,12 +180,15 @@ public class MainWindowController extends COGController {
             @Override
             public void handle(MouseEvent event) {
                if(actualShowedElement != null){
-//                    String cid = (String) commitsListView.getSelectionModel().getSelectedItem();
-                    String cid = actualShowedElement.getLastCommitId();
-                    String additionalInfo = actualShowedElement.getCommitById(cid);
+                    int index = commitsListView.getSelectionModel().getSelectedIndex();
+                    System.out.println("Index: "+index);
+                    String cid = commitsListView.getSelectionModel().getSelectedItem();
+                    String additionalInfo = actualShowedElement.getCommitByIndex(index);
                     try{
+                        commitPane.setText(cid);
                         String result = HighlighterFacade.expandSourceCode(actualShowedElement,actualShowedElement.getSource(),additionalInfo);
-                        new HighlighterFacade().displayHighlightedCode(result, sourceCodeView);
+                        new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(result, commitWebView);
+                        commitAccordion.setVisible(true);     
                     }catch(Exception e)
                     {
                         System.out.println(e.getMessage());
@@ -190,7 +203,6 @@ public class MainWindowController extends COGController {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 populateTreeView(newValue);
-//                TreeFilterUtil.filterTreeView(MainWindowController.this, newValue);
             }
             
         });
@@ -270,7 +282,7 @@ public class MainWindowController extends COGController {
         actualShowedElement = currentElement;  
         
         //Ustawianie kodu źródłowego
-        new HighlighterFacade().displayHighlightedCode(currentElement.getSource(), sourceCodeView);
+        new HighlighterFacade(CodeType.JAVA).displayHighlightedCode(currentElement.getSource(), sourceCodeView);
 
         try {
             initializeDetailsPane(currentElement);
