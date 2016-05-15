@@ -105,16 +105,17 @@ public class HighlighterFacade {
         for(CommitChange change:commitChanges)
         {
            int beginIndex = change.begin-actualElement.getBeginLine();
-           if(beginIndex < 0) continue;
+           if(beginIndex < 0 || beginIndex > resultList.size()) continue;
            List<String> tempList = new ArrayList<String>(resultList.subList(0, beginIndex));
-           tempList.add(change.changeCode);
-           tempList.addAll(sourceLines.subList(change.end,sourceLines.size()));
+           tempList.add("\n");
+           tempList.addAll(Arrays.asList(change.changeCode.split("\n")));
+           tempList.addAll(sourceLines.subList(change.end-actualElement.getBeginLine(), sourceLines.size()));
            
            resultList = tempList;
         }
         
         for(String r:resultList) result+=r;
-        System.out.println(commit);
+        System.out.println(result);
         return result;
     }
 }
