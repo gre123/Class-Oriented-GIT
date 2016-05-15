@@ -5,11 +5,7 @@
  */
 package gitbk.COGElement;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Grzesiek
@@ -55,20 +51,18 @@ public abstract class COGElement {
 
     public abstract String getCreateDate();
 
-    public String getCommitById(String commitId)
-    {
+    public String getCommitById(String commitId) {
         return commitsDiffs.get(commitId);
     }
 
-    public String getCommitByIndex(int index)
-    {
+    public String getCommitByIndex(int index) {
         Iterator<String> it = commitsDiffs.keySet().iterator();
-        for(int i=0;i<index;i++)
-        {
+        for (int i = 0; i < index; i++) {
             it.next();
         }
         return commitsDiffs.get(it.next());
     }
+
     public int getBeginLine() {
         return beginLine;
     }
@@ -93,5 +87,16 @@ public abstract class COGElement {
 
     public String getLastCommitId() {
         return commitsDiffs.keySet().iterator().next();
+    }
+
+    public String getOldestCommitId() {
+        Iterator<String> iterator = commitsDiffs.keySet().iterator();
+        String oldestCommitId = null;
+
+        while (iterator.hasNext()) {
+            oldestCommitId = iterator.next();
+        }
+
+        return oldestCommitId;
     }
 }

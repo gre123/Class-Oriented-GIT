@@ -39,7 +39,6 @@ public class GitCommandsController {
     public void pullCommand()
     {
         ExecutorService service = Executors.newSingleThreadExecutor();
-        Future<String> myTask;
         try {
             Task task = new Task(){
                 @Override

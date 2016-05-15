@@ -6,7 +6,6 @@
 package gitbk;
 
 /**
- *
  * @author Grzesiek
  */
 public class CommitChange {

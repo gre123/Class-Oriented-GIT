@@ -5,7 +5,6 @@
  */
 package gitbk;
 
-import java.io.File;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,8 +19,8 @@ public class GitBK extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        GitFacade.selectedDirectory = new File("C:/Users/Grzesiek/Moje rzeczy/rewizje/repos");
-        GitFacade.findAllReposInDirectory();
+        //GitFacade.selectedDirectory = new File("C:/Users/Grzesiek/Moje rzeczy/rewizje/repos");
+        //GitFacade.findAllReposInDirectory();
 
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
 
