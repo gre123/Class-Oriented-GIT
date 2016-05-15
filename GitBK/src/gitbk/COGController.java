@@ -8,14 +8,12 @@ package gitbk;
 import javafx.fxml.Initializable;
 
 /**
- *
  * @author Grzesiek
  */
-public abstract class COGController implements Initializable{
+public abstract class COGController implements Initializable {
     protected Initializable parentController;
 
-    public void setParentController(Initializable parent)
-    {
+    public void setParentController(Initializable parent) {
         parentController = parent;
     }
 }

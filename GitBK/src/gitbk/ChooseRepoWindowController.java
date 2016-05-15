@@ -7,14 +7,17 @@ package gitbk;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,15 +30,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 
 /**
  * FXML Controller class
@@ -47,9 +43,6 @@ public class ChooseRepoWindowController extends COGController {
     @FXML
     ListView reposListView;
 
-    @FXML
-    TextField regexField;
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setReposListView(GitFacade.repos.keySet());
@@ -57,22 +50,16 @@ public class ChooseRepoWindowController extends COGController {
     }
 
     @FXML
-    private void onAddRepoClicked() {
-        try {
-
-
-            createInputTextWindow(PathSetupWindowController.WindowBehaviour.REPO_PATH);
-        } catch (IOException ex) {
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void onAddRepoClicked() throws IOException {
+        createInputTextWindow();
     }
 
     @FXML
     private void onSelectRepoClicked() throws Exception {
         ExecutorService service = Executors.newSingleThreadExecutor();
-        
-        if (!reposListView.getSelectionModel().isEmpty()) {            
-            Task task = new Task(){
+
+        if (!reposListView.getSelectionModel().isEmpty()) {
+            Task task = new Task() {
                 @Override
                 protected Object call() throws Exception {
                     String s = (String) reposListView.getSelectionModel().getSelectedItem();
@@ -81,17 +68,17 @@ public class ChooseRepoWindowController extends COGController {
                     controller.loadCurrentRepository(repo);
                     return null;
                 }
-                
+
             };
             task.setOnSucceeded(new EventHandler() {
 
                 @Override
                 public void handle(Event event) {
-                   MainWindowController controller = (MainWindowController) parentController;
-                   Stage stage = (Stage) reposListView.getScene().getWindow();
-                   reposListView.getScene().setCursor(Cursor.DEFAULT);
-                   controller.loadCurrentRepositoryInGUI();
-                   stage.close();
+                    MainWindowController controller = (MainWindowController) parentController;
+                    Stage stage = (Stage) reposListView.getScene().getWindow();
+                    reposListView.getScene().setCursor(Cursor.DEFAULT);
+                    controller.loadCurrentRepositoryInGUI();
+                    stage.close();
                 }
             });
             reposListView.getScene().setCursor(Cursor.WAIT);
@@ -109,10 +96,9 @@ public class ChooseRepoWindowController extends COGController {
         }
     }
 
-    private void createInputTextWindow(PathSetupWindowController.WindowBehaviour behaviour) throws IOException {
+    private void createInputTextWindow() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("PathSetupWindow.fxml"));
         Parent root = (Parent) loader.load();
-        loader.<PathSetupWindowController>getController().setBehaviour(behaviour);
         loader.<PathSetupWindowController>getController().setParentController(this);
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);

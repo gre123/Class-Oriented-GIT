@@ -49,7 +49,6 @@ public class MainWindowController extends COGController {
     public Map<String, COGClass> classes;
     public Repository repository;
     public String repositoryName = "";
-    private RevWalk revWalk;
     private COGElement actualShowedElement;
 
     private GitCommandsController gitCommand = new GitCommandsController(this);
@@ -61,9 +60,6 @@ public class MainWindowController extends COGController {
 
     @FXML
     TreeView classTreeView;
-
-    @FXML
-    TextArea sourceTextArea;
 
     @FXML
     WebView sourceCodeView;
@@ -124,7 +120,6 @@ public class MainWindowController extends COGController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ;
     }
 
     @FXML
@@ -174,7 +169,6 @@ public class MainWindowController extends COGController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //TODO MainWindowController Initialize
-//        sourceTextArea.setEditable(false);
         commitsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
@@ -235,6 +229,8 @@ public class MainWindowController extends COGController {
         readmeLink.setVisible(true);
         rightStatusLabel.setText("Ilość commitów: " + GitFacade.commitList.size());
         leftStatusLabel.setText("Ilość klas: " + classes.size());
+        rightStatusLabel.setVisible(true);
+        leftStatusLabel.setVisible(true);
         populateTreeView("");
         repoMenu.setDisable(false);
     }
@@ -255,21 +251,21 @@ public class MainWindowController extends COGController {
                 allClasses.getChildren().add(item);
             }
 
-            classTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem>() {
+            classTreeView.getSelectionModel().selectedItemProperty().addListener(
+                    new ChangeListener<TreeItem>() {
 
-                @Override
-                public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
-                    if (newValue.getParent().equals(classTreeView.getRoot())) {
-                        loadCurrentElement(classes.get((String) newValue.getValue()));
-                    } else {
-                        COGClass currentClass = classes.get((String) newValue.getParent().getValue());
-                        COGMethod currentMethod = currentClass.getMethods().get((String) newValue.getValue());
-                        loadCurrentElement(currentMethod);
+                        @Override
+                        public void changed(ObservableValue<? extends TreeItem> observable, TreeItem oldValue, TreeItem newValue) {
+                            if (newValue.getParent().equals(classTreeView.getRoot())) {
+                                loadCurrentElement(classes.get((String) newValue.getValue()));
+                            } else {
+                                COGClass currentClass = classes.get((String) newValue.getParent().getValue());
+                                COGMethod currentMethod = currentClass.getMethods().get((String) newValue.getValue());
+                                loadCurrentElement(currentMethod);
+                            }
+                        }
                     }
-                }
-
-
-            });
+            );
             classTreeView.setShowRoot(false);
         }
     }
@@ -297,14 +293,13 @@ public class MainWindowController extends COGController {
 
             Label nameView = (Label) classDetailsPane.getChildren().get(0);
             Label baseClassNameView = (Label) classDetailsPane.getChildren().get(1);
-            ListView implementedInterfacesView = (ListView) classDetailsPane.getChildren().get(2);
             Label accessView = (Label) classDetailsPane.getChildren().get(3);
             Label abstractView = (Label) classDetailsPane.getChildren().get(4);
 
             nameView.setText(currentElement.getName());
             baseClassNameView.setText(currentClass.getSuperClass());
             ObservableList interfaces = FXCollections.observableArrayList(currentClass.getImplementedInterfaces());
-            implementedInterfacesView.setItems(interfaces);
+            interfacesListView.setItems(interfaces);
             accessView.setText(currentClass.getAccess());
             String isAbstract = currentClass.isAbstract() ? "Tak" : "Nie";
             abstractView.setText(isAbstract);
@@ -339,13 +334,14 @@ public class MainWindowController extends COGController {
         RevCommit oldestCommit = walk.parseCommit(ObjectId.fromString(currentElement.getOldestCommitId()));
 
         Label createDateLabel = (Label) commitDetailsPane.getChildren().get(0);
-        Label authorLabel = (Label) commitDetailsPane.getChildren().get(1);
+        Label createByLabel = (Label) commitDetailsPane.getChildren().get(1);
         Label lastModifyDateLabel = (Label) commitDetailsPane.getChildren().get(2);
-        //ListView changingCommitsView = (ListView) commitDetailsPane.getChildren().get(3);
+        Label lastModifyByLabel = (Label) commitDetailsPane.getChildren().get(3);
 
         createDateLabel.setText(df.format(oldestCommit.getAuthorIdent().getWhen()));
+        createByLabel.setText(oldestCommit.getAuthorIdent().getName());
         lastModifyDateLabel.setText(df.format(lastCommit.getAuthorIdent().getWhen()));
-        authorLabel.setText(lastCommit.getAuthorIdent().getName());
+        lastModifyByLabel.setText(lastCommit.getAuthorIdent().getName());
 
         //ustawienie commitsListView
         RevCommit commitWithDiff;

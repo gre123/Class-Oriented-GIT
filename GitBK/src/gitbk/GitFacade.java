@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class GitFacade {
     public static File selectedDirectory;
-    public static Git git; //TODO przejrzenie kodu
+    public static Git git;
     public static LinkedList<String> commitList = new LinkedList<>();
     public static Map<String, List<COGClass>> classesInFileMap = new HashMap<>();
     public static TreeMap<String, Git> repos = new TreeMap<>();
@@ -165,7 +165,7 @@ public class GitFacade {
         Repository repository = git.getRepository();
         String headCommitId = repository.resolve(Constants.HEAD).getName();
         String prevCommitId = null;
-        List<String> changedFiles = new LinkedList<>();
+        List<String> changedFiles;
 
         for (String currentCommitId : commitList) {
             if (!currentCommitId.equals(headCommitId)) {
@@ -186,7 +186,7 @@ public class GitFacade {
         DiffFormatter formatter = new DiffFormatter(outputStream);
         formatter.setRepository(repository);
 
-        //Wzór do wyszukania ciągu znaków pokroju "@@ -10,1 +15,5 @@"
+        //Wzór do wyszukania ciągu znaków typu "@@ -10,1 +15,5 @@"
         Pattern pattern = Pattern.compile("@@ -(\\d+),(\\d+) \\+(\\d+),(\\d+) @@");
 
         for (DiffEntry entry : diff) {
