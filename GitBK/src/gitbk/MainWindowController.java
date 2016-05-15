@@ -50,6 +50,7 @@ public class MainWindowController extends COGController {
     public Repository repository;
     public String repositoryName = "";
     private COGElement actualShowedElement;
+    private String wayToDisplayCommits = "Data";
 
     private GitCommandsController gitCommand = new GitCommandsController(this);
 
@@ -102,6 +103,9 @@ public class MainWindowController extends COGController {
 
     @FXML
     private Menu repoMenu;
+
+    @FXML
+    private ToggleGroup commitsButtonGroup;
 
     @FXML
     void onPullRepository(ActionEvent event) {
@@ -168,7 +172,6 @@ public class MainWindowController extends COGController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //TODO MainWindowController Initialize
         commitsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
@@ -191,6 +194,7 @@ public class MainWindowController extends COGController {
 
 
         });
+
         searchField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -198,6 +202,19 @@ public class MainWindowController extends COGController {
                 populateTreeView(newValue);
             }
 
+        });
+
+        commitsButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                wayToDisplayCommits = ((RadioButton) commitsButtonGroup.getSelectedToggle()).getText();
+                try {
+                    setCommitsListView();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 
@@ -343,15 +360,7 @@ public class MainWindowController extends COGController {
         lastModifyDateLabel.setText(df.format(lastCommit.getAuthorIdent().getWhen()));
         lastModifyByLabel.setText(lastCommit.getAuthorIdent().getName());
 
-        //ustawienie commitsListView
-        RevCommit commitWithDiff;
-        List<String> commitsDateList = new LinkedList<>();
-        for (String commitId : currentElement.getCommitIdSet()) {
-            commitWithDiff = walk.parseCommit(ObjectId.fromString(commitId));
-            commitsDateList.add(df.format(commitWithDiff.getAuthorIdent().getWhen()));
-        }
-
-        commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
+        setCommitsListView();
     }
 
 
@@ -397,4 +406,27 @@ public class MainWindowController extends COGController {
         return leftStatusLabel.getScene();
     }
 
+    private void setCommitsListView() throws IOException {
+        RevWalk walk = new RevWalk(repository);
+        RevCommit commitWithDiff;
+        List<String> commitsDateList = new LinkedList<>();
+        for (String commitId : actualShowedElement.getCommitIdSet()) {
+            commitWithDiff = walk.parseCommit(ObjectId.fromString(commitId));
+            switch (wayToDisplayCommits) {
+                case "Data":
+                    commitsDateList.add(df.format(commitWithDiff.getAuthorIdent().getWhen()));
+                    break;
+
+                case "Numer":
+                    commitsDateList.add(commitWithDiff.getName());
+                    break;
+
+                case "Opis":
+                    commitsDateList.add(commitWithDiff.getShortMessage());
+                    break;
+            }
+
+        }
+        commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
+    }
 }
