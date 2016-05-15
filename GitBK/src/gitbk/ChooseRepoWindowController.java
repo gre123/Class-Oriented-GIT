@@ -13,11 +13,16 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,8 +35,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * FXML Controller class
@@ -39,6 +42,8 @@ import java.util.logging.Logger;
  * @author Grzesiek
  */
 public class ChooseRepoWindowController extends COGController {
+
+    private Stage waitingDialogStage;
 
     @FXML
     ListView reposListView;
@@ -55,7 +60,8 @@ public class ChooseRepoWindowController extends COGController {
     }
 
     @FXML
-    private void onSelectRepoClicked() throws Exception {
+    private void onSelectRepoClicked(ActionEvent event) throws Exception {
+        createWaitingDialog(event);
         ExecutorService service = Executors.newSingleThreadExecutor();
 
         if (!reposListView.getSelectionModel().isEmpty()) {
@@ -76,12 +82,13 @@ public class ChooseRepoWindowController extends COGController {
                 public void handle(Event event) {
                     MainWindowController controller = (MainWindowController) parentController;
                     Stage stage = (Stage) reposListView.getScene().getWindow();
-                    reposListView.getScene().setCursor(Cursor.DEFAULT);
                     controller.loadCurrentRepositoryInGUI();
+                    waitingDialogStage.close();
                     stage.close();
                 }
             });
-            reposListView.getScene().setCursor(Cursor.WAIT);
+            //reposListView.getScene().setCursor(Cursor.WAIT);
+            waitingDialogStage.show();
             service.execute(task);
         }
     }
@@ -116,5 +123,33 @@ public class ChooseRepoWindowController extends COGController {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         return directoryChooser.showDialog(((Node) event.getTarget()).getScene().getWindow());
 
+    }
+
+    private void createWaitingDialog(ActionEvent event) {
+        Group root = new Group();
+        Scene scene = new Scene(root, 300, 150);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setScene(scene);
+
+        Label label1 = new Label();
+        label1.setText("Trwa wczytywanie danych z repozytorium");
+        label1.setFont(Font.font(14));
+
+        Label label2 = new Label();
+        label2.setText("Proszę czekać");
+        label2.setFont(Font.font(18));
+
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setProgress(-1);
+
+        VBox vBox = new VBox();
+        vBox.setSpacing(5);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(label2, label1, progressIndicator);
+        scene.setRoot(vBox);
+
+        waitingDialogStage = stage;
     }
 }
