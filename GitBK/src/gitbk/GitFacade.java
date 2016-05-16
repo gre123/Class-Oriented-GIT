@@ -20,6 +20,7 @@ import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import org.eclipse.jgit.treewalk.filter.PathSuffixFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.*;
@@ -210,8 +211,8 @@ public class GitFacade {
 
                     //dodanie commitów do list w elementach
                     List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
-                    int start = Integer.valueOf(matcher.group(3));
-                    int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
+                    int start = Integer.valueOf(matcher.group(3)) - 3;
+                    int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 4;
                     for (COGClass cogClass : classList) {
                         if (cogClass.addCommitToList(prevCommitId, outputStream.toString(), start, end)) {
                             for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {

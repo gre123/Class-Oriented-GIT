@@ -72,7 +72,7 @@ public abstract class COGElement {
     }
 
     public boolean addCommitToList(String commitId, String diff, int start, int end) {
-        if (beginLine <= end || endLine >= start) {
+        if (beginLine <= end && endLine >= start) {
             if (!commitsDiffs.containsKey(commitId)) {
                 commitsDiffs.put(commitId, diff);
                 return true;
