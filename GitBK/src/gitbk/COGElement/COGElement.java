@@ -74,7 +74,9 @@ public abstract class COGElement {
     public boolean addCommitToList(String commitId, String diff, int start, int end) {
         if (beginLine <= end && endLine >= start) {
             if (!commitsDiffs.containsKey(commitId)) {
-                commitsDiffs.put(commitId, diff);
+                if (!diff.equals(getOldestCommitDiff())) {
+                    commitsDiffs.put(commitId, diff);
+                }
                 return true;
             }
         }
@@ -98,5 +100,16 @@ public abstract class COGElement {
         }
 
         return oldestCommitId;
+    }
+
+    public String getOldestCommitDiff() {
+        Iterator<String> iterator = commitsDiffs.values().iterator();
+        String oldestCommitDiff = null;
+
+        while (iterator.hasNext()) {
+            oldestCommitDiff = iterator.next();
+        }
+
+        return oldestCommitDiff;
     }
 }

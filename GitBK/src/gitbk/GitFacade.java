@@ -211,8 +211,8 @@ public class GitFacade {
 
                     //dodanie commitów do list w elementach
                     List<COGClass> classList = classesInFileMap.get(entry.getNewPath());
-                    int start = Integer.valueOf(matcher.group(3)) - 3;
-                    int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 4;
+                    int start = Integer.valueOf(matcher.group(3));
+                    int end = Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(4)) - 1;
                     for (COGClass cogClass : classList) {
                         if (cogClass.addCommitToList(prevCommitId, outputStream.toString(), start, end)) {
                             for (COGClass.COGMethod cogMethod : cogClass.getMethods().values()) {
