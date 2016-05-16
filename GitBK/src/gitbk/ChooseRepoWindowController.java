@@ -87,7 +87,6 @@ public class ChooseRepoWindowController extends COGController {
                     stage.close();
                 }
             });
-            //reposListView.getScene().setCursor(Cursor.WAIT);
             waitingDialogStage.show();
             service.execute(task);
         }

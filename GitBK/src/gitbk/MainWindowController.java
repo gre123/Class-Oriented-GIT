@@ -425,7 +425,6 @@ public class MainWindowController extends COGController {
                     commitsDateList.add(commitWithDiff.getShortMessage());
                     break;
             }
-
         }
         commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }

@@ -57,6 +57,15 @@ public class GitFacade {
         return repos.keySet();
     }
 
+    public static boolean validateUrl(String url) {
+        try {
+            Git.lsRemoteRepository().setHeads(true).setRemote(url).call();
+        } catch (GitAPIException e) {
+            return false;
+        }
+        return true;
+    }
+
     static String getRepoName(Git git) throws IOException {
         String[] directoryPieces = git.getRepository().getDirectory().toString().split("\\\\");
         String name = directoryPieces[directoryPieces.length - 2];

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="99.0" prefWidth="407.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="gitbk.PathSetupWindowController">
+<AnchorPane id="AnchorPane" prefHeight="135.0" prefWidth="407.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.PathSetupWindowController">
    <children>
-      <TextField fx:id="pathInputText" layoutX="16.0" layoutY="19.0" prefHeight="31.0" prefWidth="378.0" promptText="Wpisz tu ścieżkę do repozytoriów" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="19.0" />
-      <Button layoutX="150.0" layoutY="60.0" mnemonicParsing="false" onAction="#onOKButtonClicked" prefHeight="25.0" prefWidth="111.0" text="OK" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="60.0" />
+      <TextField fx:id="pathInputText" layoutX="17.0" layoutY="41.0" prefHeight="34.0" prefWidth="378.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="41.0" />
+      <Button layoutX="68.0" layoutY="87.0" mnemonicParsing="false" onAction="#onOKButtonClicked" prefHeight="34.0" prefWidth="111.0" text="OK" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="68.0" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="87.0" />
+      <Label layoutX="17.0" layoutY="14.0" text="Podaj adres URL repozytorium:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button layoutX="206.0" layoutY="87.0" mnemonicParsing="false" onAction="#onCancelButtonClicked" prefHeight="34.0" prefWidth="111.0" text="Anuluj" />
    </children>
 </AnchorPane>

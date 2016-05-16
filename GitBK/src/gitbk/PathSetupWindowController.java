@@ -7,6 +7,7 @@ package gitbk;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -27,10 +28,28 @@ public class PathSetupWindowController implements Initializable {
     private TextField pathInputText;
 
     @FXML
-    private void onOKButtonClicked() throws Exception {
-        Set<String> repoNames = GitFacade.cloneRepo(pathInputText.getText());
-        ChooseRepoWindowController controller = (ChooseRepoWindowController) parentController;
-        controller.setReposListView(repoNames);
+    void onOKButtonClicked() throws Exception {
+        if (GitFacade.validateUrl(pathInputText.getText())) {
+            Set<String> repoNames = GitFacade.cloneRepo(pathInputText.getText());
+            ChooseRepoWindowController controller = (ChooseRepoWindowController) parentController;
+            controller.setReposListView(repoNames);
+            Stage stage = (Stage) pathInputText.getScene().getWindow();
+            stage.close();
+        } else {
+            showErrorDialog();
+        }
+    }
+
+    private void showErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Błąd!");
+        alert.setHeaderText("Brak repozytorium");
+        alert.setContentText("Pod wskazanym adresem URL nie znajduje się żadne repozytorium do sklonowania");
+        alert.showAndWait();
+    }
+
+    @FXML
+    void onCancelButtonClicked() {
         Stage stage = (Stage) pathInputText.getScene().getWindow();
         stage.close();
     }
