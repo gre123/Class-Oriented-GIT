@@ -109,7 +109,7 @@ public class HighlighterFacade {
            resultList = tempList;
         }
         
-        for(String r:resultList) result+=r;
+        for(String r:resultList) result+=r+"\n";
         System.out.println(result);
         return result;
     }

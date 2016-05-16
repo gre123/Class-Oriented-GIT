@@ -59,17 +59,20 @@
         </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <WebView fx:id="sourceCodeView" fontScale="0.8" layoutX="5.0" layoutY="70.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="1247.0" prefWidth="433.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="70.0" />
           <Label alignment="CENTER" font="$x1" layoutX="65.0" prefHeight="27.0" prefWidth="127.0" style="&#10;" text="Kod źródłowy" textAlignment="CENTER" textFill="$x2" wrapText="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                  <Accordion fx:id="commitAccordion" focusTraversable="false" layoutX="5.0" layoutY="44.0" prefHeight="578.0" prefWidth="433.0" visible="false" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="44.0">
-                    <panes>
-                      <TitledPane fx:id="commitPane" animated="false" focusTraversable="false" prefHeight="397.0" prefWidth="443.0" text="untitled 1">
-                           <content>
-                              <WebView fx:id="commitWebView" fontScale="0.8" prefHeight="200.0" prefWidth="200.0" />
-                           </content>
-                        </TitledPane>
-                    </panes>
-                  </Accordion>
+                  <WebView fx:id="sourceCodeView" focusTraversable="false" fontScale="0.8" layoutX="5.0" layoutY="78.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="772.0" prefWidth="676.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="78.0" />
+                  <GridPane fx:id="commitPane" gridLinesVisible="true" layoutX="4.0" layoutY="78.0" opacity="0.94" prefHeight="474.0" prefWidth="676.0" visible="false" AnchorPane.bottomAnchor="299.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="78.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <WebView fx:id="commitWebView" fontScale="0.8" layoutX="37.0" layoutY="112.0" prefHeight="339.0" prefWidth="525.0" />
+                     </children>
+                  </GridPane>
+                  <ToggleButton fx:id="showCommitButton" contentDisplay="CENTER" layoutX="5.0" layoutY="53.0" mnemonicParsing="false" onAction="#onShowCommitClicked" text="ToggleButton" visible="false" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="53.0" />
                </children>
             </AnchorPane>
          <AnchorPane maxWidth="250.0">

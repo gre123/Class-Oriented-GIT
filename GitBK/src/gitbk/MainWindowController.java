@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.layout.GridPane;
 
 
 /**
@@ -78,7 +79,7 @@ public class MainWindowController extends COGController {
     Pane commitDetailsPane;
 
     @FXML
-    TitledPane commitPane;
+    GridPane commitPane;
 
     @FXML
     ListView<String> commitsListView;
@@ -107,6 +108,8 @@ public class MainWindowController extends COGController {
     @FXML
     private ToggleGroup commitsButtonGroup;
 
+    @FXML
+    private ToggleButton showCommitButton;
     @FXML
     void onPullRepository(ActionEvent event) {
         gitCommand.pullCommand();
@@ -170,6 +173,19 @@ public class MainWindowController extends COGController {
         }
     }
 
+    @FXML
+    void onShowCommitClicked() throws Exception{
+        if(showCommitButton.isSelected())
+        {
+            int index = commitsListView.getSelectionModel().getSelectedIndex();
+            String additionalInfo = actualShowedElement.getCommitByIndex(index);
+            String result = HighlighterFacade.expandSourceCode(actualShowedElement, actualShowedElement.getSource(), additionalInfo);
+            new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(result, commitWebView);
+            commitPane.setVisible(true);
+        }
+        else commitPane.setVisible(false);
+
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         commitsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -178,14 +194,16 @@ public class MainWindowController extends COGController {
             public void handle(MouseEvent event) {
                 if (actualShowedElement != null) {
                     int index = commitsListView.getSelectionModel().getSelectedIndex();
-                    //System.out.println("Index: "+index);
                     String cid = commitsListView.getSelectionModel().getSelectedItem();
-                    String additionalInfo = actualShowedElement.getCommitByIndex(index);
+//                    String additionalInfo = actualShowedElement.getCommitByIndex(index);
                     try {
-                        commitPane.setText(cid);
-                        String result = HighlighterFacade.expandSourceCode(actualShowedElement, actualShowedElement.getSource(), additionalInfo);
-                        new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(result, commitWebView);
-                        commitAccordion.setVisible(true);
+                        showCommitButton.setText(cid);
+                        showCommitButton.setVisible(true);
+                        if(showCommitButton.isSelected())
+                        {
+                            onShowCommitClicked();
+                        }
+                        
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
