@@ -94,23 +94,33 @@ public class HighlighterFacade {
         List<String> sourceLines = Arrays.asList(sourceCode.split("\n"));
         List<String> resultList = sourceLines;
         String result = "";
-
+        
         List<CommitChange> commitChanges = Source2ClassConverter.convertCommitToSingleCommitChange(commit);
         
         for(CommitChange change:commitChanges)
         {
+           System.out.println(change.changeCode);
+           List<String> tempList=null;
            int beginIndex = change.begin-actualElement.getBeginLine();
-           if(beginIndex < 0 || beginIndex > resultList.size()) continue;
-           List<String> tempList = new ArrayList<String>(resultList.subList(0, beginIndex));
-           tempList.add("\n");
-           tempList.addAll(Arrays.asList(change.changeCode.split("\n")));
-           tempList.addAll(sourceLines.subList(change.end-actualElement.getBeginLine(), sourceLines.size()));
-           
+           if(beginIndex < 0 || beginIndex > resultList.size())
+           {
+               if(beginIndex<0)
+               {
+                   tempList= new ArrayList<String>(Arrays.asList(change.changeCode.split("\n")));
+                   tempList.addAll(sourceLines);
+               }
+           }
+           else{
+            tempList = new ArrayList<String>(resultList.subList(0, beginIndex));
+            tempList.add("\n");
+            tempList.addAll(Arrays.asList(change.changeCode.split("\n")));
+            tempList.addAll(sourceLines.subList(change.end-actualElement.getBeginLine(), sourceLines.size()));
+           }
            resultList = tempList;
         }
         
         for(String r:resultList) result+=r+"\n";
-        System.out.println(result);
+//        System.out.println(result);
         return result;
     }
 }
