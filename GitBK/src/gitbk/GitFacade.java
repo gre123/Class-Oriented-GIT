@@ -60,7 +60,7 @@ public class GitFacade {
     public static boolean validateUrl(String url) {
         try {
             Git.lsRemoteRepository().setHeads(true).setRemote(url).call();
-        } catch (GitAPIException e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
