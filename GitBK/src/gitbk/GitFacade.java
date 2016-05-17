@@ -174,7 +174,7 @@ public class GitFacade {
     public static void checkAllCommitsDiff() throws IOException, GitAPIException {
         Repository repository = git.getRepository();
         String headCommitId = repository.resolve(Constants.HEAD).getName();
-        String prevCommitId = null;
+        String prevCommitId = repository.resolve(Constants.HEAD).getName();
         List<String> changedFiles;
 
         for (String currentCommitId : commitList) {

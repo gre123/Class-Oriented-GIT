@@ -99,7 +99,6 @@ public class HighlighterFacade {
         
         for(CommitChange change:commitChanges)
         {
-           System.out.println(change.changeCode);
            List<String> tempList=null;
            int beginIndex = change.begin-actualElement.getBeginLine();
            if(beginIndex < 0 || beginIndex > resultList.size())

@@ -179,8 +179,8 @@ public class MainWindowController extends COGController {
         {
             int index = commitsListView.getSelectionModel().getSelectedIndex();
             String additionalInfo = actualShowedElement.getCommitByIndex(index);
-            String result = HighlighterFacade.expandSourceCode(actualShowedElement, actualShowedElement.getSource(), additionalInfo);
-            new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(result, commitWebView);
+//            String result = HighlighterFacade.expandSourceCode(actualShowedElement, actualShowedElement.getSource(), additionalInfo);
+            new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(additionalInfo, commitWebView);
             commitPane.setVisible(true);
         }
         else commitPane.setVisible(false);
