@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
+<VBox prefHeight="700.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gitbk.MainWindowController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -176,7 +176,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <ListView fx:id="commitsListView" layoutX="10.0" layoutY="250.0" prefHeight="516.0" prefWidth="225.0" />
+                                    <ListView fx:id="commitsListView" layoutX="10.0" layoutY="250.0" prefHeight="316.0" prefWidth="225.0" />
                                     <Label layoutX="10.0" layoutY="10.0" text="Data utworzenia:" />
                                     <Label layoutX="10.0" layoutY="40.0" text="przez:" />
                                     <Label layoutX="10.0" layoutY="90.0" text="Ostatnia zmiana:" />
@@ -206,7 +206,7 @@
             <Font size="11.0" fx:id="x3" />
           </font>
         </Label>
-        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Pane prefHeight="0.0" prefWidth="1076.0" HBox.hgrow="ALWAYS" />
         <Label fx:id="rightStatusLabel" font="$x3" maxWidth="-1.0" text="Right status" visible="false" HBox.hgrow="NEVER" />
       </children>
       <padding>

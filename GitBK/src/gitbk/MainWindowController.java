@@ -179,8 +179,8 @@ public class MainWindowController extends COGController {
         {
             int index = commitsListView.getSelectionModel().getSelectedIndex();
             String additionalInfo = actualShowedElement.getCommitByIndex(index);
-//            String result = HighlighterFacade.expandSourceCode(actualShowedElement, actualShowedElement.getSource(), additionalInfo);
-            new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(additionalInfo, commitWebView);
+            String result = HighlighterFacade.displayDiffCode(additionalInfo);
+            new HighlighterFacade(CodeType.DIFF).displayHighlightedCode(result, commitWebView);
             commitPane.setVisible(true);
         }
         else commitPane.setVisible(false);
@@ -195,9 +195,12 @@ public class MainWindowController extends COGController {
                 if (actualShowedElement != null) {
                     int index = commitsListView.getSelectionModel().getSelectedIndex();
                     String cid = commitsListView.getSelectionModel().getSelectedItem();
-//                    String additionalInfo = actualShowedElement.getCommitByIndex(index);
+                    String commitId = actualShowedElement.getCommitIdByIndex(index);
+                    RevWalk walk = new RevWalk(repository);
                     try {
-                        showCommitButton.setText(cid);
+                        RevCommit commit = walk.parseCommit(ObjectId.fromString(commitId));
+                        String name = commit.getAuthorIdent().getName();
+                        showCommitButton.setText(cid + " przez " + name);
                         showCommitButton.setVisible(true);
                         if(showCommitButton.isSelected())
                         {
@@ -454,4 +457,5 @@ public class MainWindowController extends COGController {
         }
         commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }
+
 }
