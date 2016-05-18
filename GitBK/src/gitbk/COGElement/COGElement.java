@@ -62,6 +62,14 @@ public abstract class COGElement {
         }
         return commitsDiffs.get(it.next());
     }
+    
+    public String getCommitIdByIndex(int index) {
+        Iterator<String> it = commitsDiffs.keySet().iterator();
+        for (int i = 0; i < index; i++) {
+            it.next();
+        }
+        return it.next();
+    }
 
     public int getBeginLine() {
         return beginLine;
