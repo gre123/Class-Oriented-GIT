@@ -43,7 +43,6 @@ public class GitCommandsController {
                 protected Object call() throws Exception {
                     commandStatus = GitFacade.pullRepo(parentController.repository);
                     parentController.loadCurrentRepository(new Git(parentController.repository));
-                    HighlighterFacade.clearWebView(parentController.sourceCodeView);
                     return commandStatus;
                 }
 
@@ -53,6 +52,7 @@ public class GitCommandsController {
                 public void handle(Event event) {
                     parentController.loadCurrentRepositoryInGUI();
                     parentController.getScene().setCursor(Cursor.DEFAULT);
+                    HighlighterFacade.clearWebView(parentController.sourceCodeView);
                     parentController.showGitResultDialog("GIT PULL:", commandStatus);
                 }
             });
@@ -86,7 +86,6 @@ public class GitCommandsController {
                     protected Object call() throws Exception {
                         GitFacade.commitRepo(parentController.repository, result.get());
                         parentController.loadCurrentRepository(new Git(parentController.repository));
-                        HighlighterFacade.clearWebView(parentController.sourceCodeView);
                         return commandStatus;
                     }
                 };
@@ -95,6 +94,7 @@ public class GitCommandsController {
                     public void handle(Event event) {
                         parentController.loadCurrentRepositoryInGUI();
                         parentController.getScene().setCursor(Cursor.DEFAULT);
+                        HighlighterFacade.clearWebView(parentController.sourceCodeView);
                         parentController.showGitResultDialog("GIT COMMIT:", "Commit command executed successfully");
                     }
                 });
