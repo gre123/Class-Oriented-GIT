@@ -43,7 +43,7 @@ public class GitCommandsController {
                 protected Object call() throws Exception {
                     commandStatus = GitFacade.pullRepo(parentController.repository);
                     parentController.loadCurrentRepository(new Git(parentController.repository));
-                    new HighlighterFacade(HighlighterFacade.CodeType.JAVA).displayHighlightedCode("", parentController.sourceCodeView);
+                    HighlighterFacade.clearWebView(parentController.sourceCodeView);
                     return commandStatus;
                 }
 
@@ -86,7 +86,7 @@ public class GitCommandsController {
                     protected Object call() throws Exception {
                         GitFacade.commitRepo(parentController.repository, result.get());
                         parentController.loadCurrentRepository(new Git(parentController.repository));
-                        new HighlighterFacade(HighlighterFacade.CodeType.JAVA).displayHighlightedCode("", parentController.sourceCodeView);
+                        HighlighterFacade.clearWebView(parentController.sourceCodeView);
                         return commandStatus;
                     }
                 };
