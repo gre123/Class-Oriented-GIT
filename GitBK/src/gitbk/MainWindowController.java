@@ -457,8 +457,5 @@ public class MainWindowController extends COGController {
         }
         commitsListView.setItems(FXCollections.observableArrayList(commitsDateList));
     }
-    
-    public void costamcostam()
-    {
-    }
+
 }
