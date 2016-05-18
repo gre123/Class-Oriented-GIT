@@ -95,6 +95,6 @@ public class HighlighterFacade {
     }
     public static void clearWebView(WebView webview)
     {
-        webview.getEngine().loadContent(null);
+        webview.getEngine().loadContent("<html></html>");
     }
 }
