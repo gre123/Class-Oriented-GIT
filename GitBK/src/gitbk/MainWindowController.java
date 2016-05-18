@@ -401,7 +401,15 @@ public class MainWindowController extends COGController {
         alert.setTitle("Git Command");
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.show();
+        alert.showAndWait();
+    }
+    
+    public void showGitErrorDialog(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Git Command");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public void showLoginWindow() throws Exception {
