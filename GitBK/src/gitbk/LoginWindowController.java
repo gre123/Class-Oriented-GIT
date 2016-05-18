@@ -40,10 +40,5 @@ public class LoginWindowController extends COGController {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }
-    
-    public void siemano(String cos)
-    {
-        
-    }
 
 }
