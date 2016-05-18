@@ -5,10 +5,7 @@
  */
 package gitbk.COGElement;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Grzesiek
@@ -54,9 +51,16 @@ public abstract class COGElement {
 
     public abstract String getCreateDate();
 
-    public String getCommitById(String commitId)
-    {
+    public String getCommitById(String commitId) {
         return commitsDiffs.get(commitId);
+    }
+
+    public String getCommitByIndex(int index) {
+        Iterator<String> it = commitsDiffs.keySet().iterator();
+        for (int i = 0; i < index; i++) {
+            it.next();
+        }
+        return commitsDiffs.get(it.next());
     }
 
     public int getBeginLine() {
@@ -68,9 +72,11 @@ public abstract class COGElement {
     }
 
     public boolean addCommitToList(String commitId, String diff, int start, int end) {
-        if (beginLine <= end || endLine >= start) {
+        if (beginLine <= end && endLine >= start) {
             if (!commitsDiffs.containsKey(commitId)) {
-                commitsDiffs.put(commitId, diff);
+                if (!diff.equals(getOldestCommitDiff())) {
+                    commitsDiffs.put(commitId, diff);
+                }
                 return true;
             }
         }
@@ -83,5 +89,27 @@ public abstract class COGElement {
 
     public String getLastCommitId() {
         return commitsDiffs.keySet().iterator().next();
+    }
+
+    public String getOldestCommitId() {
+        Iterator<String> iterator = commitsDiffs.keySet().iterator();
+        String oldestCommitId = null;
+
+        while (iterator.hasNext()) {
+            oldestCommitId = iterator.next();
+        }
+
+        return oldestCommitId;
+    }
+
+    public String getOldestCommitDiff() {
+        Iterator<String> iterator = commitsDiffs.values().iterator();
+        String oldestCommitDiff = null;
+
+        while (iterator.hasNext()) {
+            oldestCommitDiff = iterator.next();
+        }
+
+        return oldestCommitDiff;
     }
 }

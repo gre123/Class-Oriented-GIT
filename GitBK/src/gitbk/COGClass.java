@@ -6,39 +6,38 @@
 package gitbk;
 
 import gitbk.COGElement.COGElement;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class COGClass extends COGElement implements Comparable<COGClass>{
-    
-    private String className="---";
+public class COGClass extends COGElement implements Comparable<COGClass> {
+
+    private String className = "---";
     private Map<String, COGMethod> classMethods;
-    private String classSource="---";
-    
-    private String superClass="---";
+    private String classSource = "---";
+
+    private String superClass = "---";
     private List<String> implementedInterfaces = new ArrayList<>();
     private boolean isAbstract;
     private String classAccess = "---";
-    
+
     private List<String> authors = new ArrayList<>();
     private String lastChange;
     private String createDate;
-    private List<String> changingCommits = new ArrayList<>();
 
     @Override
     public int compareTo(COGClass t) {
         return className.compareTo(t.className);
     }
-    
-    public class COGMethod extends COGElement
-    {
+
+    public class COGMethod extends COGElement {
         private String methodName;
         private String methodAccess;
         private String methodSource;
-        private String methodReturnType="---";
+        private String methodReturnType = "---";
         private boolean isAbstract;
-        
+
         private List<String> authors = new ArrayList<>();
         private String lastChange;
         private String createDate;
@@ -47,30 +46,29 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
         public void setReturnType(String methodReturnType) {
             this.methodReturnType = methodReturnType;
         }
-        
+
         @Override
-        public void setName(String name)
-        {
+        public void setName(String name) {
             methodName = name;
         }
+
         @Override
-        public void setAccess(String access)
-        {
+        public void setAccess(String access) {
             methodAccess = access;
         }
+
         @Override
-        public void setSource(String source)
-        {
+        public void setSource(String source) {
             methodSource = source;
         }
+
         @Override
-        public String getName()
-        {
+        public String getName() {
             return methodName;
         }
+
         @Override
-        public String getSource()
-        {
+        public String getSource() {
             return methodSource;
         }
 
@@ -120,39 +118,32 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
             return createDate;
         }
 
-        public List<String> getChangingCommits() {
-            return changingCommits;
-        }
-
         public String getReturnType() {
             return methodReturnType;
         }
-        
-        
+
+
     }
-    
+
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.className = name;
     }
-    public void setMethods(Map<String,COGMethod> methods)
-    {
+
+    public void setMethods(Map<String, COGMethod> methods) {
         this.classMethods = methods;
     }
-    
+
     @Override
-    public void setSource(String source)
-    {
+    public void setSource(String source) {
         classSource = source;
     }
-    
-    public void setSuperClass(String superClass)
-    {
+
+    public void setSuperClass(String superClass) {
         this.superClass = superClass;
     }
-    public void setImplementedInterfaces(List<String> interfaces)
-    {
+
+    public void setImplementedInterfaces(List<String> interfaces) {
         implementedInterfaces = interfaces;
     }
 
@@ -170,30 +161,27 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
-    
-    
+
+
     @Override
-    public String getSource()
-    {
+    public String getSource() {
         return classSource;
     }
-    
+
     @Override
-    public String getName()
-    {
+    public String getName() {
         return className;
     }
-    
-    public Map<String, COGMethod> getMethods()
-    {
+
+    public Map<String, COGMethod> getMethods() {
         return classMethods;
     }
-    public String getSuperClass()
-    {
+
+    public String getSuperClass() {
         return superClass;
     }
-    public List<String> getImplementedInterfaces()
-    {
+
+    public List<String> getImplementedInterfaces() {
         return implementedInterfaces;
     }
 
@@ -231,7 +219,4 @@ public class COGClass extends COGElement implements Comparable<COGClass>{
     public String getCreateDate() {
         return createDate;
     }
-
-    
-    
 }

@@ -6,9 +6,8 @@
 package gitbk;
 
 public class COGClassFactory {
-    
-    public static COGClass newInstance()
-    {
+
+    public static COGClass newInstance() {
         return new COGClass();
     }
 }

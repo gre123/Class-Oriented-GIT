@@ -5,15 +5,16 @@
  */
 package gitbk;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import org.eclipse.jgit.lib.Constants;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * FXML Controller class
@@ -25,22 +26,21 @@ public class ReadmeWindowController extends COGController {
     /**
      * Initializes the controller class.
      */
-    
+
     @FXML
     TextArea readmeArea;
-    
+
     @FXML
-    void onCloseClicked()
-    {
+    void onCloseClicked() {
         Stage stage = (Stage) readmeArea.getScene().getWindow();
         stage.close();
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
-    }    
+
+    }
 
     @Override
     public void setParentController(Initializable parent) {
@@ -52,7 +52,6 @@ public class ReadmeWindowController extends COGController {
             Logger.getLogger(ReadmeWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    
+
+
 }
