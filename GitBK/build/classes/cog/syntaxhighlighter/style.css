@@ -1,0 +1,15 @@
+body {
+   overflow-x:scroll;
+}
+
+#progressbar {  
+    margin: auto;
+    width: 60%;	
+}
+
+.commitchange {
+    display: none;
+}
+hr {
+   border-color: #b81900;
+}
