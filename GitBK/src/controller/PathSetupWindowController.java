@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dialog;
+package controller;
 
-import window.ChooseRepoWindowController;
 import facade.GitFacade;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

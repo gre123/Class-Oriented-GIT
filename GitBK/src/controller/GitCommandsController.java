@@ -17,7 +17,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextInputDialog;
-import window.MainWindowController;
 import org.eclipse.jgit.api.Git;
 
 /**

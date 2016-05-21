@@ -1,4 +1,4 @@
-package window;
+package controller;
 
 import controller.COGController;
 import model.COGClass;
